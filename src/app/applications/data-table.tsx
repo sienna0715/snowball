@@ -1,6 +1,10 @@
 "use client"
 
 import * as React from "react";
+import Link from "next/link";
+import { Funnel } from "lucide-react";
+
+/** shadcn */
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -31,7 +35,6 @@ import {
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import Link from "next/link";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -68,7 +71,7 @@ export function DataTable<TData, TValue>({
 
     return (
         <div>
-            <div className="flex items-center py-4">
+            <div className="flex items-center justify-between py-4">
                 <Input
                     placeholder="Filter emails..."
                     value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
@@ -78,9 +81,16 @@ export function DataTable<TData, TValue>({
                     className="max-w-sm"
                 />
                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="ml-auto">Filter</Button>
-                    </DropdownMenuTrigger>
+                    <div className="flex gap-2.5">
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="ml-auto">
+                                <Funnel />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <Button variant="default" className="ml-auto" asChild>
+                            <Link href="/applications/create">Write</Link>
+                        </Button>
+                    </div>
                     <DropdownMenuContent align="end">
                         {table
                         .getAllColumns()
@@ -103,7 +113,7 @@ export function DataTable<TData, TValue>({
                         })}
                     </DropdownMenuContent>
                 </DropdownMenu>
-        </div>
+            </div>
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
@@ -133,7 +143,7 @@ export function DataTable<TData, TValue>({
                         >
                             {row.getVisibleCells().map((cell) => (
                             <TableCell key={cell.id}>
-                                <Link href={`/application/${cell.id.split('_')[0]}`}>
+                                <Link href={`/applications/${cell.id.split('_')[0]}`}>
                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                 </Link>
                             </TableCell>

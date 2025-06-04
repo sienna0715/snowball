@@ -16,7 +16,7 @@ import { ArrowUpDown } from "lucide-react";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type Payment = {
+export type Application = {
     id: string
     amount: number
     status: "pending" | "processing" | "success" | "failed"
@@ -24,7 +24,7 @@ export type Payment = {
     company: string
 }
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Application>[] = [
     {
         accessorKey: "status",
         header: "Status",
