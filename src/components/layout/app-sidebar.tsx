@@ -1,3 +1,5 @@
+'use client';
+
 import { Calendar, Home, Inbox, NotebookPen, Settings, User } from "lucide-react"
 
 import {

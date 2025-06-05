@@ -192,8 +192,8 @@ export default async function ApplicationsDtailPage({ params }: { params: Promis
             </Accordion>
 
             <div className="mt-16">
-                <span className="font-bold text-">키워드</span>
-                <div className="flex gap-1.5">
+                <span className="font-bold text-base">키워드</span>
+                <div className="flex gap-1.5 pt-4">
                     <Badge asChild className="bg-blue-500">
                         <Link href="/">HTML</Link>
                     </Badge>
