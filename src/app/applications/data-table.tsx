@@ -73,10 +73,10 @@ export function DataTable<TData, TValue>({
         <div>
             <div className="flex items-center justify-between py-4">
                 <Input
-                    placeholder="Filter emails..."
-                    value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+                    placeholder="Filter Company name..."
+                    value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
                     onChange={(event) =>
-                        table.getColumn("email")?.setFilterValue(event.target.value)
+                        table.getColumn("name")?.setFilterValue(event.target.value)
                     }
                     className="max-w-sm"
                 />
@@ -121,7 +121,7 @@ export function DataTable<TData, TValue>({
                         <TableRow key={headerGroup.id}>
                         {headerGroup.headers.map((header) => {
                             return (
-                            <TableHead key={header.id}>
+                            <TableHead key={header.id} className="text-center">
                                 {header.isPlaceholder
                                 ? null
                                 : flexRender(
@@ -142,19 +142,23 @@ export function DataTable<TData, TValue>({
                             data-state={row.getIsSelected() && "selected"}
                         >
                             {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id}>
-                                <Link href={`/applications/${cell.id.split('_')[0]}`}>
-                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                </Link>
-                            </TableCell>
+                                <TableCell key={cell.id}>
+                                    {cell.column.id === "name" ? (
+                                        <Link href={`/applications/${row.id}`}>
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                        </Link>
+                                    ) : (
+                                        flexRender(cell.column.columnDef.cell, cell.getContext())
+                                    )}
+                                </TableCell>
                             ))}
                         </TableRow>
                         ))
                     ) : (
                         <TableRow>
-                        <TableCell colSpan={columns.length} className="h-24 text-center">
-                            No results.
-                        </TableCell>
+                            <TableCell colSpan={columns.length} className="h-24 text-center">
+                                No results.
+                            </TableCell>
                         </TableRow>
                     )}
                     </TableBody>
