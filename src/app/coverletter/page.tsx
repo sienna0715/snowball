@@ -7,31 +7,12 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { columns, Coverletter } from "./columns"
+import { columns } from "./columns"
 import { DataTable } from "./data-table";
-
-
-async function getData(): Promise<Coverletter[]> {
-    return [
-        {
-        id: "728ed52f",
-        amount: 100,
-        status: "pending",
-        company: "가나다",
-        email: "m@example.com",
-        },
-        {
-        id: "728ed52f",
-        amount: 200,
-        status: "pending",
-        company: "거너더",
-        email: "abc@example.com",
-        },
-    ]
-}
+import { getCoverletter } from "@/service/coverletter";
 
 export default async function CoverletterPage() {
-    const data = await getData()
+    const datas = await getCoverletter();
 
     return (
         <div className="py-10 mb-25">
@@ -66,7 +47,7 @@ export default async function CoverletterPage() {
             </div>
 
             <div className="w-full container mx-auto py-10">
-                <DataTable columns={columns} data={data} />
+                <DataTable columns={columns} data={datas} />
             </div>
         </div>
     );

@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Funnel } from "lucide-react";
+import { Funnel, Trash } from "lucide-react";
 
 /** shadcn */
 import {
@@ -37,24 +37,32 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 interface DataTableProps<TData, TValue> {
-    columns: ColumnDef<TData, TValue>[]
-    data: TData[]
+    columns: ColumnDef<TData, TValue>[];
+    data: TData[];
+    pageSize?: number;
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
+    pageSize = 10
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = React.useState({});
+    const [pagination, setPagination] = React.useState({
+        pageIndex: 0,
+        pageSize,
+    });
 
     const table = useReactTable({
         data,
         columns,
+        onPaginationChange: setPagination,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
+        manualPagination: false,
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
         onColumnFiltersChange: setColumnFilters,
@@ -66,6 +74,7 @@ export function DataTable<TData, TValue>({
             columnFilters,
             columnVisibility,
             rowSelection,
+            pagination,
         },
     })
 
@@ -73,10 +82,10 @@ export function DataTable<TData, TValue>({
         <div>
             <div className="flex items-center justify-between py-4">
                 <Input
-                    placeholder="Filter emails..."
-                    value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+                    placeholder="Filter tilte..."
+                    value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
                     onChange={(event) =>
-                        table.getColumn("email")?.setFilterValue(event.target.value)
+                        table.getColumn("title")?.setFilterValue(event.target.value)
                     }
                     className="max-w-sm"
                 />
@@ -119,18 +128,18 @@ export function DataTable<TData, TValue>({
                     <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id}>
-                        {headerGroup.headers.map((header) => {
-                            return (
-                            <TableHead key={header.id}>
-                                {header.isPlaceholder
-                                ? null
-                                : flexRender(
-                                    header.column.columnDef.header,
-                                    header.getContext()
-                                    )}
-                            </TableHead>
-                            )
-                        })}
+                            {headerGroup.headers.map((header) => {
+                                return (
+                                <TableHead key={header.id}  className={`text-center ${header.id === "title" ? "w-[70%]" : ""}`}>
+                                    {header.isPlaceholder
+                                    ? null
+                                    : flexRender(
+                                        header.column.columnDef.header,
+                                        header.getContext()
+                                        )}
+                                </TableHead>
+                                )
+                            })}
                         </TableRow>
                     ))}
                     </TableHeader>
@@ -142,28 +151,38 @@ export function DataTable<TData, TValue>({
                             data-state={row.getIsSelected() && "selected"}
                         >
                             {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id}>
-                                <Link href={`/coverletter/${cell.id.split('_')[0]}`}>
-                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                </Link>
-                            </TableCell>
+                                <TableCell key={cell.id}>
+                                    {cell.column.id === "title" ? (
+                                        <Link href={`/coverletter/${row.id}`}>
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                        </Link>
+                                    ) : (
+                                        flexRender(cell.column.columnDef.cell, cell.getContext())
+                                    )}
+                                </TableCell>
                             ))}
                         </TableRow>
                         ))
                     ) : (
                         <TableRow>
-                        <TableCell colSpan={columns.length} className="h-24 text-center">
-                            No results.
-                        </TableCell>
+                            <TableCell colSpan={columns.length} className="h-24 text-center">
+                                No results.
+                            </TableCell>
                         </TableRow>
                     )}
                     </TableBody>
                 </Table>
             </div>
             <div className="flex justify-between">
-                <div className="text-muted-foreground flex-1 text-sm py-4">
-                    {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                    {table.getFilteredRowModel().rows.length} row(s) selected.
+                <div className="flex justify-start items-center">
+                    <div className="text-muted-foreground flex-1 text-sm py-4">
+                        {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                        {table.getFilteredRowModel().rows.length} row(s) selected.
+                    </div>
+                    <Button variant="ghost" className="ml-auto">
+                        <span className="sr-only">Delete</span>
+                        <Trash />
+                    </Button>
                 </div>
                 <div className="flex items-center justify-end space-x-2 py-4">
                     <Button

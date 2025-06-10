@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import RecruitmentProcess from "@/components/RecruitmentProcess";
 
 export default async function ApplicationsDtailPage({ params }: { params: Promise<{slug: string}>}) {
     const { slug } = await params;
@@ -100,12 +101,7 @@ export default async function ApplicationsDtailPage({ params }: { params: Promis
 
             <div className="my-16">
                 <span className="font-bold">채용절차</span>
-                <ul className="flex gap-4 mt-4">
-                    <li className="min-w-36 p-7 border rounded-[50px] text-center">서류전형</li>
-                    <li className="min-w-36 p-7 border rounded-[50px] text-center">온라인 인적성</li>
-                    <li className="min-w-36 p-7 border rounded-[50px] text-center">면접</li>
-                    <li className="min-w-36 p-7 border rounded-[50px] text-center">결과</li>
-                </ul>
+                <RecruitmentProcess steps={["서류 전형", "온라인 인적성", "면접", "결과"]} processStep="면접" />
             </div>
 
             <Accordion type="multiple">
@@ -194,16 +190,16 @@ export default async function ApplicationsDtailPage({ params }: { params: Promis
             <div className="mt-16">
                 <span className="font-bold text-base">키워드</span>
                 <div className="flex gap-1.5 pt-4">
-                    <Badge asChild className="bg-blue-500">
+                    <Badge asChild className="bg-secondary text-black">
                         <Link href="/">HTML</Link>
                     </Badge>
                     <Badge asChild className="bg-secondary text-black">
                         <Link href="/">TypeScript</Link>
                     </Badge>
-                    <Badge asChild>
+                    <Badge asChild className="bg-secondary text-black">
                         <Link href="/">React</Link>
                     </Badge>
-                    <Badge asChild>
+                    <Badge asChild className="bg-secondary text-black">
                         <Link href="/">Next.js</Link>
                     </Badge>
                 </div>

@@ -13,26 +13,31 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowUpDown } from "lucide-react";
 import { Application } from "@/service/applications";
+import Link from "next/link";
 
 export const columns: ColumnDef<Application>[] = [
     {
         id: "select",
         header: ({ table }) => (
-        <Checkbox
-            checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label="Select all"
-        />
+            <div>
+                <Checkbox
+                    checked={
+                    table.getIsAllPageRowsSelected() ||
+                    (table.getIsSomePageRowsSelected() && "indeterminate")
+                    }
+                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                    aria-label="Select all"
+                />
+            </div>
         ),
         cell: ({ row }) => (
-        <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-        />
+            <div className="flex justify-center">
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => row.toggleSelected(!!value)}
+                    aria-label="Select row"
+                />
+            </div>
         ),
         enableSorting: false,
         enableHiding: false,
@@ -100,7 +105,22 @@ export const columns: ColumnDef<Application>[] = [
         accessorKey: "status",
         header: "Status",
         cell: ({ row }) => (
-            <div className="text-center">{row.getValue("status")}</div>
+            <div className="flex justify-center">
+                <span
+                    className={`
+                    text-white rounded-sm px-2 py-0.5 font-bold
+                    ${
+                        row.getValue("status") === "최종 합격"
+                        ? "bg-red-500"
+                        : row.getValue("status") === "불합격"
+                        ? "bg-gray-400"
+                        : "bg-blue-500"
+                    }
+                    `}
+                >
+                    {row.getValue("status")}
+                </span>
+            </div>
         )
     },
     {
@@ -121,7 +141,7 @@ export const columns: ColumnDef<Application>[] = [
                         <DropdownMenuItem
                         onClick={() => navigator.clipboard.writeText(submenu.id)}
                         >
-                            Edit
+                            <Link href={`/applications/${row.id}`}>Edit</Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>Delete</DropdownMenuItem>

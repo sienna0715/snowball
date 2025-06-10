@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Funnel } from "lucide-react";
+import { Funnel, Trash } from "lucide-react";
 
 /** shadcn */
 import {
@@ -39,22 +39,30 @@ import {
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    pageSize?: number
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
+    pageSize = 10
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = React.useState({});
+    const [pagination, setPagination] = React.useState({
+        pageIndex: 0,
+        pageSize,
+    });
 
     const table = useReactTable({
         data,
         columns,
+        onPaginationChange: setPagination,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
+        manualPagination: false,
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
         onColumnFiltersChange: setColumnFilters,
@@ -66,6 +74,7 @@ export function DataTable<TData, TValue>({
             columnFilters,
             columnVisibility,
             rowSelection,
+            pagination,
         },
     })
 
@@ -165,9 +174,15 @@ export function DataTable<TData, TValue>({
                 </Table>
             </div>
             <div className="flex justify-between">
-                <div className="text-muted-foreground flex-1 text-sm py-4">
-                    {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                    {table.getFilteredRowModel().rows.length} row(s) selected.
+                <div className="flex justify-start items-center">
+                    <div className="text-muted-foreground flex-1 text-sm py-4">
+                        {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                        {table.getFilteredRowModel().rows.length} row(s) selected.
+                    </div>
+                    <Button variant="ghost" className="ml-auto">
+                        <span className="sr-only">Delete</span>
+                        <Trash />
+                    </Button>
                 </div>
                 <div className="flex items-center justify-end space-x-2 py-4">
                     <Button
