@@ -59,6 +59,7 @@ const items = [
 
 export function AppSidebar() {
     const { data: session } = useSession();
+    const user = session?.user;
 
     return (
         <Sidebar>
@@ -102,14 +103,12 @@ export function AppSidebar() {
             <SidebarFooter className='w-full p-2 mb-2'>
                 {session ? (
                     <div className='w-full flex flex-row items-center gap-2 p-2 rounded-md hover:bg-sidebar-accent'>
-                        <div className='p-2 bg-gray-300 rounded-lg'>
-                            <User />
+                        <div className='w-12 h-12 bg-gray-300 rounded-lg overflow-hidden flex justify-center items-center'>
+                            {user && user.image ? <img src={user.image} /> : <User />}
                         </div>
                         <div className='flex flex-col gap-1 text-sm'>
-                            <span>반짝이는 워터멜론</span>
-                            <span className='text-xs'>
-                                watermelone@gmail.com
-                            </span>
+                            <span>{user && user.name}</span>
+                            <span className='text-xs'>{user && user.email}</span>
                         </div>
                         <button
                             type='button'

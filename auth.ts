@@ -2,6 +2,16 @@ import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import type { Provider } from "next-auth/providers";
+import addUser from "./studio-hello-world/src/sanity/user";
+
+// Extend the Session and User types to include 'username'
+import type { DefaultSession } from "next-auth";
+
+declare module "next-auth" {
+    interface Session {
+        user?: DefaultSession["user"] & { username?: string };
+    }
+}
 
 const providers: Provider[] = [
     Credentials({
@@ -39,14 +49,42 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         signIn: "/signin",
     },
     callbacks: {
-        signIn: async () => {
-            return true;
+        signIn: async ({ user, account }) => {
+            const payload = {
+                id: account?.providerAccountId ?? user.id ?? "",
+                name: user.name || "",
+                email: user.email!,
+                image: user.image || "",
+                username: user.email!.split("@")[0],
+                provider: account?.provider,
+                providerAccountId: account?.providerAccountId,
+            };
+            // console.log("[auth] addUser payload:", payload); // 시작 로그
+
+            try {
+                await addUser(payload);
+                // console.log("[auth] addUser done"); // 완료 로그
+                return true;
+            } catch (e) {
+                console.error("Add User failed", e); // 실패 로그
+                return true;
+            }
         },
         // jwt: async ({ token, user }) => {
         //     return token;
         // },
-        // session: async ({ session, token }) => {
-        //     return session;
-        // },
+        session: async ({ session }) => {
+            console.log("session", session);
+
+            const user = session?.user;
+
+            if (user) {
+                session.user = {
+                    ...user,
+                    username: user.email?.split("@")[0] || "",
+                };
+            }
+            return session;
+        },
     },
 });
