@@ -26,7 +26,7 @@ export default async function ApplicationsDtailPage({ params }: { params: Promis
     const application = await getApplication(slug);
 
     if (!application) {
-        redirect('/applications');
+        redirect('/app/job');
     }
 
     return (

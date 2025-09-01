@@ -1,7 +1,7 @@
 import { ChartPieLabel } from "@/components/layout/PieChart"; 
 import { getApplications } from "@/service/applications";
-import { DataTable as ApplicationTable } from "./applications/data-table";
-import { columns as ApplicationColumns } from "./applications/columns"
+import { DataTable as ApplicationTable } from "./job/data-table";
+import { columns as ApplicationColumns } from "./job/columns"
 import { getCoverletter } from "@/service/coverletter";
 import { DataTable as CoverletterTable } from "./coverletter/data-table";
 import { columns as CoverletterColumns} from "./coverletter/columns"

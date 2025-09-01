@@ -141,7 +141,7 @@ export const columns: ColumnDef<Application>[] = [
                         <DropdownMenuItem
                         onClick={() => navigator.clipboard.writeText(submenu.id)}
                         >
-                            <Link href={`/applications/${row.id}`}>Edit</Link>
+                            <Link href={`/app/job/${row.id}`}>Edit</Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>Delete</DropdownMenuItem>

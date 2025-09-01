@@ -37,22 +37,22 @@ const items = [
     },
     {
         title: "내 지원 현황",
-        url: "/applications",
+        url: "/app/job",
         icon: Inbox,
     },
     {
         title: "자기소개서 관리",
-        url: "/coverletter",
+        url: "/app/coverletter",
         icon: NotebookPen,
     },
     {
         title: "캘린더",
-        url: "/calendar",
+        url: "/app/calendar",
         icon: Calendar,
     },
     {
         title: "설정",
-        url: "/setting",
+        url: "/app/setting",
         icon: Settings,
     },
 ];

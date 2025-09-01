@@ -97,7 +97,7 @@ export function DataTable<TData, TValue>({
                             </Button>
                         </DropdownMenuTrigger>
                         <Button variant="default" className="ml-auto" asChild>
-                            <Link href="/applications/create">Write</Link>
+                            <Link href="/app/job/create">Write</Link>
                         </Button>
                     </div>
                     <DropdownMenuContent align="end">
@@ -153,7 +153,7 @@ export function DataTable<TData, TValue>({
                             {row.getVisibleCells().map((cell) => (
                                 <TableCell key={cell.id}>
                                     {cell.column.id === "name" ? (
-                                        <Link href={`/applications/${row.id}`}>
+                                        <Link href={`/app/job/${row.id}`}>
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </Link>
                                     ) : (
