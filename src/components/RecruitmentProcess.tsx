@@ -1,10 +1,12 @@
 
 type Process = {
     steps: string[];
-    processStep: string;
+    status: string;
 }
 
-export default function RecruitmentProcess({ steps, processStep }: Process) {
+export default function RecruitmentProcess({ steps, status }: Process) {
+    const processStep = status
+
     return (
         <div className="w-max">
             <div className="border-b relative top-15 -z-1"></div>
