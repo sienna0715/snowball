@@ -1,9 +1,9 @@
-import { getApplications } from "@/service/applications";
+import { getJobs } from "@/service/job";
 import { columns } from "./columns"
 import { DataTable } from "./data-table"
 
-export default async function ApplicationsPage() {
-    const datas = await getApplications();
+export default async function JobPage() {
+    const datas = await getJobs();
     
     return (
         <div className="w-full container mx-auto py-10">

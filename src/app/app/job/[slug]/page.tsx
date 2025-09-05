@@ -1,4 +1,4 @@
-import { getApplication, getApplications } from "@/service/applications";
+import { getJob } from "@/service/job";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -21,24 +21,24 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import RecruitmentProcess from "@/components/RecruitmentProcess";
 
-export default async function ApplicationsDtailPage({ params }: { params: Promise<{slug: string}>}) {
-    const { slug } = await params;
-    const application = await getApplication(slug);
+export const dynamic = "force-dynamic"; // 항상 요청 시 서버에서 렌더 되도록
 
-    if (!application) {
+export default async function JobDtailPage({ params }: { params: {slug: string} }) {
+    const { slug } = params;
+    const job = await getJob(slug);
+
+    if (!job) {
         redirect('/app/job');
     }
 
     return (
         <div className="py-10 mb-25">
             <div className="w-full flex flex-col gap-4 mb-4">
-                <h1 className="text-4xl font-bold pb-4">(주) 동우</h1>
-                <Link href="https://www.naver.com/">
+                <h1 className="text-4xl font-bold pb-4">{job.company}</h1>
+                <Link href={job.url || "#"}>
                     <span>공고 링크</span>
                 </Link>
-                <p className="max-w-5xl">
-                    It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for lorem ipsum will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
-                </p>
+                <p className="w-full max-w-5xl">{job.introduce}</p>
             </div>
 
             <Table>
@@ -51,23 +51,23 @@ export default async function ApplicationsDtailPage({ params }: { params: Promis
                 <TableBody>
                     <TableRow>
                         <TableCell className="font-bold">위치</TableCell>
-                        <TableCell>경상북도 포항시</TableCell>
+                        <TableCell>{job.location}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell className="font-bold">업종</TableCell>
-                        <TableCell>설계</TableCell>
+                        <TableCell>{job.industry}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell className="font-bold">업력</TableCell>
-                        <TableCell>50년차</TableCell>
+                        <TableCell>{job.year}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell className="font-bold">사원수</TableCell>
-                        <TableCell>30명</TableCell>
+                        <TableCell>{job.employees}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell className="font-bold">대표명</TableCell>
-                        <TableCell>김영대</TableCell>
+                        <TableCell>{job.ceo}</TableCell>
                     </TableRow>
                 </TableBody>
             </Table>
@@ -82,26 +82,26 @@ export default async function ApplicationsDtailPage({ params }: { params: Promis
                 <TableBody>
                     <TableRow>
                         <TableCell className="font-bold">근무형태</TableCell>
-                        <TableCell>정규직</TableCell>
+                        <TableCell>{job.employmentType}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell className="font-bold">근무지</TableCell>
-                        <TableCell>경상북도 포항시 북구</TableCell>
+                        <TableCell>{job.workLocation}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell className="font-bold">급여</TableCell>
-                        <TableCell>조정</TableCell>
+                        <TableCell>{job.salary}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell className="font-bold">참조</TableCell>
-                        <TableCell>Link</TableCell>
+                        <TableCell>{job.other}</TableCell>
                     </TableRow>
                 </TableBody>
             </Table>
 
             <div className="my-16">
                 <span className="font-bold">채용절차</span>
-                <RecruitmentProcess steps={["서류 전형", "온라인 인적성", "면접", "결과"]} processStep="면접" />
+                <RecruitmentProcess steps={["원서접수", "면접전형", "최종합격"]} status={job.status} />
             </div>
 
             <Accordion type="multiple">
@@ -208,10 +208,10 @@ export default async function ApplicationsDtailPage({ params }: { params: Promis
     );
 }
 
-export async function generateStaticParams() {
-    const applications = await getApplications();
+// export async function generateStaticParams() {
+//     const jobs = await getJobs();
 
-    return applications.map((app) => ({
-        slug: app.id,
-    }));
-}
+//     return jobs.map((app: { _id: string; }) => ({
+//         slug: app._id,
+//     }));
+// }

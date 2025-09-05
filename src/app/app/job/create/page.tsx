@@ -7,101 +7,117 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
+import addJob from "../../../../../studio-hello-world/src/sanity/job";
 
-export default function ApplicationsCreatePage() {
-
+export default function CreateJobPage() {
     return (
-        <div className="py-10 mb-25">
-            <form className="flex flex-col gap-4 mb-16">
-                <Label htmlFor="email" className="flex items-center">
-                    <span className="min-w-25">회사명</span>
-                    <Input className="max-w-3xl" />
+        <div className='py-10 mb-25'>
+            <form action={addJob} className='flex flex-col gap-4 mb-16'>
+                <Label htmlFor='company' className='flex items-center'>
+                    <span className='min-w-25'>회사명</span>
+                    <Input name='company' className='max-w-3xl' required />
                 </Label>
-                <Label htmlFor="email" className="flex items-center">
-                    <span className="min-w-25">공고 링크</span>
-                    <Input className="max-w-3xl" />
+                <Label htmlFor='url' className='flex items-center'>
+                    <span className='min-w-25'>공고 링크</span>
+                    <Input name='url' className='max-w-3xl' />
                 </Label>
-                <Label htmlFor="email" className="flex items-start">
-                    <span className="min-w-25 pt-2">회사 소개</span>
-                    <Textarea className="max-w-3xl" />
+                <Label htmlFor='introduce' className='flex items-start'>
+                    <span className='min-w-25 pt-2'>회사 소개</span>
+                    <Textarea name='introduce' className='max-w-3xl' />
                 </Label>
-                <Label htmlFor="email" className="flex items-center">
-                    <span className="min-w-25">위치</span>
-                    <Input className="max-w-3xl" />
+                <Label htmlFor='location' className='flex items-center'>
+                    <span className='min-w-25'>위치</span>
+                    <Input name='location' className='max-w-3xl' />
                 </Label>
-                <Label htmlFor="email" className="flex items-center">
-                    <span className="min-w-25">업종</span>
-                    <Input className="max-w-3xl" />
+                <Label htmlFor='industry' className='flex items-center'>
+                    <span className='min-w-25'>업종</span>
+                    <Input name='industry' className='max-w-3xl' />
                 </Label>
-                <Label htmlFor="email" className="flex items-center">
-                    <span className="min-w-25">업력</span>
-                    <Input className="max-w-3xl" />
+                <Label htmlFor='year' className='flex items-center'>
+                    <span className='min-w-25'>업력</span>
+                    <Input name='year' className='max-w-3xl' />
                 </Label>
-                <Label htmlFor="email" className="flex items-center">
-                    <span className="min-w-25">사원수</span>
-                    <Input className="max-w-3xl" />
+                <Label htmlFor='employees' className='flex items-center'>
+                    <span className='min-w-25'>사원수</span>
+                    <Input name='employees' className='max-w-3xl' />
                 </Label>
-                <Label htmlFor="email" className="flex items-center">
-                    <span className="min-w-25">대표명</span>
-                    <Input className="max-w-3xl" />
+                <Label htmlFor='ceo' className='flex items-center'>
+                    <span className='min-w-25'>대표명</span>
+                    <Input name='ceo' className='max-w-3xl' />
                 </Label>
-                <Label htmlFor="email" className="flex items-center">
-                    <span className="min-w-25">근무 형태</span>
-                    <Input className="max-w-3xl" />
-                </Label>
-                <Label htmlFor="email" className="flex items-center">
-                    <span className="min-w-25">근무지</span>
-                    <Input className="max-w-3xl" />
-                </Label>
-                <Label htmlFor="email" className="flex items-center">
-                    <span className="min-w-25">급여</span>
-                    <Input className="max-w-3xl" />
-                </Label>
-                <Label htmlFor="email" className="flex items-center">
-                    <span className="min-w-25">참조</span>
-                    <Input className="max-w-3xl" />
-                </Label>
-                <Label htmlFor="email" className="flex items-center">
-                    <span className="min-w-25">채용절차</span>
-                    <Input className="max-w-3xl" />
-                </Label>
-                <Label htmlFor="email" className="flex items-center">
-                    <span className="min-w-25">채용절차</span>
-                    <Select>
-                        <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Theme" />
+                <Label htmlFor='employmentType' className='flex items-center'>
+                    <span className='min-w-25'>근무 형태</span>
+
+                    <Select name='employmentType'>
+                        <SelectTrigger className='w-[180px]'>
+                            <SelectValue placeholder='선택' />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="light">Light</SelectItem>
-                            <SelectItem value="dark">Dark</SelectItem>
-                            <SelectItem value="system">System</SelectItem>
+                            <SelectItem value='정규직' >정규직</SelectItem>
+                            <SelectItem value='계약직'>계약직</SelectItem>
+                            <SelectItem value='인턴'>인턴</SelectItem>
+                            <SelectItem value='파트타임'>파트타임</SelectItem>
                         </SelectContent>
                     </Select>
                 </Label>
-                <Label htmlFor="email" className="flex items-start">
-                    <span className="min-w-25 pt-2">문화 / 복리후생</span>
-                    <Textarea className="max-w-3xl" />
+                <Label htmlFor='workLocation' className='flex items-center'>
+                    <span className='min-w-25'>근무지</span>
+                    <Input name='workLocation' className='max-w-3xl' />
                 </Label>
-                <Label htmlFor="email" className="flex items-start">
-                    <span className="min-w-25 pt-2">담당업무</span>
-                    <Textarea className="max-w-3xl" />
+                <Label htmlFor='salary' className='flex items-center'>
+                    <span className='min-w-25'>급여</span>
+                    <Input name='salary' className='max-w-3xl' />
                 </Label>
-                <Label htmlFor="email" className="flex items-start">
-                    <span className="min-w-25 pt-2">자격요건</span>
-                    <Textarea className="max-w-3xl" />
+                <Label htmlFor='email' className='flex items-center'>
+                    <span className='min-w-25'>채용절차</span>
+                    <Select>
+                        <SelectTrigger className='w-[180px]'>
+                            <SelectValue placeholder='선택' />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value='서류 심사'>서류 심사</SelectItem>
+                            <SelectItem value='서류 합격'>서류 합격</SelectItem>
+                            <SelectItem value='1차 합격'>1차 합격</SelectItem>
+                            <SelectItem value='2차 합격'>2차 합격</SelectItem>
+                            <SelectItem value='면접 합격'>면접 합격</SelectItem>
+                            <SelectItem value='최종 합격'>최종 합격</SelectItem>
+                            <SelectItem value='불합격'>불합격</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </Label>
-                <Label htmlFor="email" className="flex items-start">
-                    <span className="min-w-25 pt-2">우대사항</span>
-                    <Textarea className="max-w-3xl" />
+                {/* <Label htmlFor='email' className='flex items-center'>
+                    <span className='min-w-25'>참조</span>
+                    <Input className='max-w-3xl' />
                 </Label>
+                <Label htmlFor='email' className='flex items-center'>
+                    <span className='min-w-25'>채용절차</span>
+                    <Input className='max-w-3xl' />
+                </Label>
+                
+                <Label htmlFor='email' className='flex items-start'>
+                    <span className='min-w-25 pt-2'>문화 / 복리후생</span>
+                    <Textarea className='max-w-3xl' />
+                </Label>
+                <Label htmlFor='email' className='flex items-start'>
+                    <span className='min-w-25 pt-2'>담당업무</span>
+                    <Textarea className='max-w-3xl' />
+                </Label>
+                <Label htmlFor='email' className='flex items-start'>
+                    <span className='min-w-25 pt-2'>자격요건</span>
+                    <Textarea className='max-w-3xl' />
+                </Label>
+                <Label htmlFor='email' className='flex items-start'>
+                    <span className='min-w-25 pt-2'>우대사항</span>
+                    <Textarea className='max-w-3xl' />
+                </Label> */}
+                <Button type='submit' className="mt-4 cursor-pointer">
+                    <Save />
+                    저장하기
+                </Button>
             </form>
-            <Button>
-                <Save />
-                저장하기
-            </Button>
         </div>
     );
 }
