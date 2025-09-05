@@ -1,14 +1,14 @@
 import { ChartPieLabel } from "@/components/layout/PieChart"; 
-import { getApplications } from "@/service/applications";
+import { getJobs } from "@/service/job";
 import { DataTable as ApplicationTable } from "./job/data-table";
 import { columns as ApplicationColumns } from "./job/columns"
-import { getCoverletter } from "@/service/coverletter";
+import { getCoverletters } from "@/service/coverletter";
 import { DataTable as CoverletterTable } from "./coverletter/data-table";
 import { columns as CoverletterColumns} from "./coverletter/columns"
 
 export default async function Home() {
-    const applicationDatas = await getApplications();
-    const coverletterDatas = await getCoverletter();
+    const applicationDatas = await getJobs();
+    const coverletterDatas = await getCoverletters();
 
     return (
         <div className="py-10 mb-25 flex flex-col gap-8">

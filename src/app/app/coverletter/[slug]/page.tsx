@@ -1,3 +1,6 @@
+import { getCoverletter } from "@/service/coverletter";
+import { redirect } from "next/navigation";
+
 import {
     Menubar,
     MenubarContent,
@@ -7,8 +10,17 @@ import {
     MenubarShortcut,
     MenubarTrigger,
 } from "@/components/ui/menubar"
+import Link from "next/link";
 
-export default function CoverletterDetailPage() {
+export const dynamic = "force-dynamic"; // 항상 요청 시 서버에서 렌더 되도록
+
+export default async function CoverletterDetailPage({ params }: { params: {slug: string} }) {
+    const { slug } = params;
+    const coverletter = await getCoverletter(slug);
+
+    if (!coverletter) {
+        redirect('/app/coverletter');
+    }
 
     return (
         <div className="py-10 mb-25">
@@ -33,7 +45,9 @@ export default function CoverletterDetailPage() {
                     </MenubarMenu>
 
                     <MenubarMenu>
-                        <MenubarTrigger>Edit</MenubarTrigger>
+                        <Link href={`/app/coverletter/${slug}/edit`}>
+                            <MenubarTrigger>Edit</MenubarTrigger>
+                        </Link>
                     </MenubarMenu>
 
                     <MenubarMenu>
@@ -41,19 +55,11 @@ export default function CoverletterDetailPage() {
                     </MenubarMenu>
                 </Menubar>
 
-                <span>Created 2025.06.05</span>
+                <span>Created {coverletter.date}</span>
             </div>
             <div>
-                <h1 className="text-4xl">Various versions have evolved over the years, sometimes by accident, sometimes on purpose.</h1>
-                <p className="text-base/8 mt-8">
-                    It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for lorem ipsum will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
-                    It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for lorem ipsum will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
-                    <br />
-                    It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for lorem ipsum will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
-                    It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for lorem ipsum will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
-                    It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for lorem ipsum will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
-                    It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for lorem ipsum will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
-                </p>
+                <h1 className="text-4xl">{coverletter.title}</h1>
+                <p className="text-base/8 mt-8">{coverletter.content}</p>
             </div>
         </div>
     );

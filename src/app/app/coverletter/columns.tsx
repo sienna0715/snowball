@@ -1,7 +1,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Link, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -12,7 +12,15 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowUpDown } from "lucide-react";
-import { Coverletter } from "@/service/coverletter";
+import Link from "next/link";
+
+type Coverletter = {
+    _id: string;
+    slug?: { current?: string };
+    date: string;
+    title: string;
+    company: string;
+}
 
 export const columns: ColumnDef<Coverletter>[] = [
     {
@@ -56,10 +64,37 @@ export const columns: ColumnDef<Coverletter>[] = [
     },
     {
         accessorKey: "title",
-        header: "Title",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant='ghost'
+                    onClick={() =>
+                        column.toggleSorting(column.getIsSorted() === "asc")
+                    }
+                >
+                    Title
+                    <ArrowUpDown className='ml-2 h-4 w-4' />
+                </Button>
+            );
+        },
+        cell: ({ row }) => {
+            const coverletter = row.original;
+            const slugOrId = coverletter.slug?.current || coverletter._id;
+
+            console.log("[CoverletterRow]", coverletter._id, coverletter.slug?.current);
+
+            return (
+                <Link
+                    href={`/app/coverletter/${encodeURIComponent(slugOrId)}`}
+                    className='underline'
+                >
+                    {coverletter.title || "-"}
+                </Link>
+            );
+        },
     },
     {
-        accessorKey: "target",
+        accessorKey: "company",
         header: "Company"
     },
     {
@@ -80,7 +115,7 @@ export const columns: ColumnDef<Coverletter>[] = [
                         <DropdownMenuItem
                         onClick={() => navigator.clipboard.writeText(submenu.id)}
                         >
-                            <Link href={`/app/job/${row.id}`}>Edit</Link>
+                            <Link href={`/app/coverletter/${row.id}`}>Edit</Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>Delete</DropdownMenuItem>

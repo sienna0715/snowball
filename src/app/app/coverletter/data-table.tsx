@@ -97,7 +97,7 @@ export function DataTable<TData, TValue>({
                             </Button>
                         </DropdownMenuTrigger>
                         <Button variant="default" className="ml-auto" asChild>
-                            <Link href="/coverletter/create">Write</Link>
+                            <Link href="/app/coverletter/create">Write</Link>
                         </Button>
                     </div>
                     <DropdownMenuContent align="end">

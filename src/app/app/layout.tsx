@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "../globals.css";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/layout/app-sidebar";
+import { AppSidebar } from "@/components/layout/AppSidebar";
 
 export const metadata: Metadata = {
     title: "Snowball",

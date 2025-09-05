@@ -9,10 +9,10 @@ import {
 } from "@/components/ui/card";
 import { columns } from "./columns"
 import { DataTable } from "./data-table";
-import { getCoverletter } from "@/service/coverletter";
+import { getCoverletters } from "@/service/coverletter";
 
 export default async function CoverletterPage() {
-    const datas = await getCoverletter();
+    const datas = await getCoverletters();
 
     return (
         <div className="py-10 mb-25">
