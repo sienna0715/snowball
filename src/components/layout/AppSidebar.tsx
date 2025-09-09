@@ -104,7 +104,8 @@ export function AppSidebar() {
                 {session ? (
                     <div className='w-full flex flex-row items-center gap-2 p-2 rounded-md hover:bg-sidebar-accent'>
                         <div className='w-12 h-12 bg-gray-300 rounded-lg overflow-hidden flex justify-center items-center'>
-                            {user && user.image ? <img src={user.image} /> : <User />}
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            {user && user.image ? <img src={user.image} alt={user?.name ?? ""} /> : <User />}
                         </div>
                         <div className='flex flex-col gap-1 text-sm'>
                             <span>{user && user.name}</span>

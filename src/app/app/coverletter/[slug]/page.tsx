@@ -12,10 +12,14 @@ import {
 } from "@/components/ui/menubar"
 import Link from "next/link";
 
+type Params = {
+    slug: string
+}
+
 export const dynamic = "force-dynamic"; // 항상 요청 시 서버에서 렌더 되도록
 
-export default async function CoverletterDetailPage({ params }: { params: {slug: string} }) {
-    const { slug } = params;
+export default async function CoverletterDetailPage({ params }: { params: Promise<Params> }) {
+    const { slug } = await params;
     const coverletter = await getCoverletter(slug);
 
     if (!coverletter) {

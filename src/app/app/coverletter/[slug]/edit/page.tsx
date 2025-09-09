@@ -6,13 +6,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Save } from "lucide-react";
+import { redirect } from "next/navigation";
 
-export default async function EditCoverletterPage({
-    params,
-}: {
-    params: { slug: string };
-}) {
-    const coverletter = await getCoverletter(params.slug);
+type Params = {
+    slug: string
+}
+
+export default async function EditCoverletterPage({ params }: { params: Promise<Params> }) {
+    const { slug } = await params;
+    const coverletter = await getCoverletter(slug);
+
+    if (!coverletter) {
+        redirect('/app/coverletter');
+    }
 
     return (
         <form action={updateCoverletter} className='flex flex-col'>

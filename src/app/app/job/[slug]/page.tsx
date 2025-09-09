@@ -21,10 +21,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import RecruitmentProcess from "@/components/RecruitmentProcess";
 
+type Params = {
+    slug: string
+}
+
 export const dynamic = "force-dynamic"; // 항상 요청 시 서버에서 렌더 되도록
 
-export default async function JobDtailPage({ params }: { params: {slug: string} }) {
-    const { slug } = params;
+export default async function JobDtailPage({ params }: { params: Promise<Params> }) {
+    const { slug } = await params;
     const job = await getJob(slug);
 
     if (!job) {
