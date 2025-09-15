@@ -81,7 +81,7 @@ export const columns: ColumnDef<Coverletter>[] = [
             const coverletter = row.original;
             const slugOrId = coverletter.slug?.current || coverletter._id;
 
-            console.log("[CoverletterRow]", coverletter._id, coverletter.slug?.current);
+            // console.log("[CoverletterRow]", coverletter._id, coverletter.slug?.current);
 
             return (
                 <Link

@@ -74,7 +74,7 @@ export const columns: ColumnDef<Job>[] = [
             const job = row.original;
             const slugOrId = job.slug?.current || job._id;
 
-            console.log("[JobRow]", job._id, job.slug?.current);
+            // console.log("[JobRow]", job._id, job.slug?.current);
 
             return (
                 <Link

@@ -42,12 +42,12 @@ export default async function addUser({
         providerAccountId,
     }
 
-    console.log("[sanity] writing to:", {
-        projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-        dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
-    });
+    // console.log("[sanity] writing to:", {
+    //     projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+    //     dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
+    // });
     
-    console.log("[sanity] upsert id:", sanityId);
+    // console.log("[sanity] upsert id:", sanityId);
 
     return client
         .transaction()
