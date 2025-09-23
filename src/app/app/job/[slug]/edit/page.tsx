@@ -10,48 +10,62 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
-import addJob from "../../../../../studio-hello-world/src/sanity/job";
+import { updateJob } from "../../../../../../studio-hello-world/src/sanity/job";
+import { redirect } from "next/navigation";
+import { getJob } from "@/service/job";
 
-export default function CreateJobPage() {
+type Params = {
+    slug: string
+}
+
+export default async function EditJobPage({ params }: { params: Promise<Params> }) {
+    const { slug } = await params;
+    const job = await getJob(slug);
+
+    if (!job) {
+        redirect('/app/job');
+    }
+
     return (
         <div className='py-10 mb-25'>
-            <form action={addJob} className='flex flex-col gap-4 mb-16'>
+            <form action={updateJob} className='flex flex-col gap-4 mb-16'>
+                <input type='hidden' name='_id' value={job._id} />
                 <Label htmlFor='company' className='flex items-center'>
                     <span className='min-w-25'>회사명</span>
-                    <Input name='company' className='max-w-3xl' required />
+                    <Input name='company' className='max-w-3xl' defaultValue={job.company} required />
                 </Label>
                 <Label htmlFor='url' className='flex items-center'>
                     <span className='min-w-25'>공고 링크</span>
-                    <Input name='url' className='max-w-3xl' />
+                    <Input name='url' className='max-w-3xl' defaultValue={job.url} />
                 </Label>
                 <Label htmlFor='introduce' className='flex items-start'>
                     <span className='min-w-25 pt-2'>회사 소개</span>
-                    <Textarea name='introduce' className='max-w-3xl' />
+                    <Textarea name='introduce' className='max-w-3xl' defaultValue={job.introduce} />
                 </Label>
                 <Label htmlFor='location' className='flex items-center'>
                     <span className='min-w-25'>위치</span>
-                    <Input name='location' className='max-w-3xl' />
+                    <Input name='location' className='max-w-3xl' defaultValue={job.location} />
                 </Label>
                 <Label htmlFor='industry' className='flex items-center'>
                     <span className='min-w-25'>업종</span>
-                    <Input name='industry' className='max-w-3xl' />
+                    <Input name='industry' className='max-w-3xl' defaultValue={job.industry} />
                 </Label>
                 <Label htmlFor='year' className='flex items-center'>
                     <span className='min-w-25'>업력</span>
-                    <Input name='year' className='max-w-3xl' />
+                    <Input name='year' className='max-w-3xl' defaultValue={job.year} />
                 </Label>
                 <Label htmlFor='employees' className='flex items-center'>
                     <span className='min-w-25'>사원수</span>
-                    <Input name='employees' className='max-w-3xl' />
+                    <Input name='employees' className='max-w-3xl' defaultValue={job.employees} />
                 </Label>
                 <Label htmlFor='ceo' className='flex items-center'>
                     <span className='min-w-25'>대표명</span>
-                    <Input name='ceo' className='max-w-3xl' />
+                    <Input name='ceo' className='max-w-3xl' defaultValue={job.ceo} />
                 </Label>
                 <Label htmlFor='employmentType' className='flex items-center'>
                     <span className='min-w-25'>근무 형태</span>
 
-                    <Select name='employmentType'>
+                    <Select name='employmentType' defaultValue={job.employmentType}>
                         <SelectTrigger className='w-[180px]'>
                             <SelectValue placeholder='선택' />
                         </SelectTrigger>
@@ -65,15 +79,15 @@ export default function CreateJobPage() {
                 </Label>
                 <Label htmlFor='workLocation' className='flex items-center'>
                     <span className='min-w-25'>근무지</span>
-                    <Input name='workLocation' className='max-w-3xl' />
+                    <Input name='workLocation' className='max-w-3xl' defaultValue={job.workLocation} />
                 </Label>
                 <Label htmlFor='salary' className='flex items-center'>
                     <span className='min-w-25'>급여</span>
-                    <Input name='salary' className='max-w-3xl' />
+                    <Input name='salary' className='max-w-3xl' defaultValue={job.salary} />
                 </Label>
-                <Label htmlFor='status' className='flex items-center'>
+                <Label htmlFor='email' className='flex items-center'>
                     <span className='min-w-25'>채용절차</span>
-                    <Select>
+                    <Select name='status' defaultValue={job.status}>
                         <SelectTrigger className='w-[180px]'>
                             <SelectValue placeholder='선택' />
                         </SelectTrigger>

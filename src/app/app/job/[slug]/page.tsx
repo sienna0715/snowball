@@ -20,6 +20,16 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import RecruitmentProcess from "@/components/RecruitmentProcess";
+import {
+    Menubar,
+    MenubarContent,
+    MenubarItem,
+    MenubarMenu,
+    MenubarSeparator,
+    MenubarShortcut,
+    MenubarTrigger,
+} from "@/components/ui/menubar"
+import { deleteJob } from "../../../../../studio-hello-world/src/sanity/job";
 
 type Params = {
     slug: string
@@ -37,7 +47,40 @@ export default async function JobDtailPage({ params }: { params: Promise<Params>
 
     return (
         <div className="py-10 mb-25">
-            <div className="w-full flex flex-col gap-4 mb-4">
+            <Menubar className="w-max">
+                <MenubarMenu>
+                    <MenubarTrigger>File</MenubarTrigger>
+                    <MenubarContent>
+                        <MenubarItem>
+                            New Tab <MenubarShortcut>⌘T</MenubarShortcut>
+                        </MenubarItem>
+                        <MenubarItem>New Window</MenubarItem>
+                        <MenubarSeparator />
+                        <MenubarItem>Share</MenubarItem>
+                        <MenubarSeparator />
+                        <MenubarItem>Print</MenubarItem>
+                    </MenubarContent>
+                </MenubarMenu>
+
+                <MenubarMenu>
+                    <Link href={`/app/job/${slug}/edit`}>
+                        <MenubarTrigger>Edit</MenubarTrigger>
+                    </Link>
+                </MenubarMenu>
+
+                <MenubarMenu>
+                    <form action={deleteJob}>
+                        <input type="hidden" name="_id" value={job._id} />
+                        <MenubarTrigger asChild>
+                            <button type="submit" className="w-full text-left">
+                                Delete
+                            </button>
+                        </MenubarTrigger>
+                    </form>
+                </MenubarMenu>
+            </Menubar>
+
+            <div className="w-full flex flex-col gap-4 mb-4 mt-8">
                 <h1 className="text-4xl font-bold pb-4">{job.company}</h1>
                 <Link href={job.url || "#"}>
                     <span>공고 링크</span>

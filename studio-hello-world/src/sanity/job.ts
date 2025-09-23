@@ -72,3 +72,103 @@ export default async function addJob(formData: FormData) {
     await client.create(data)
     redirect('/app/job')
 }
+
+export async function updateJob(formData: FormData) {
+
+    const session = await auth()
+    if (!session?.user?.email) redirect('/auth/signin')
+
+    const id = formData.get('_id')?.toString()
+    if (!id) throw new Error('`_id` is required to update a job')
+
+    const owner = await client.fetch<{ _id: string } | null>(
+        `*[_type == "user" && email == $email][0]{ _id }`,
+        { email: session.user.email }
+    )
+    if (!owner?._id) throw new Error('User document not found in Sanity')
+
+    const current = await client.fetch<{
+        _id: string
+        slug?: { current?: string }
+    }| null>(
+        `*[_type == "job" && _id == $id && owner._ref == $ownerId][0]{ _id }`,
+        { id, ownerId: owner._id }
+    )
+    if (!current?._id) throw new Error('Job not found or not owned by current user')
+
+    const read = (key: string) => {
+        const v = formData.get(key)
+        return v === null ? undefined : v.toString()
+    }
+
+    const updatePayload: Record<string, any> = {}
+    const fields = [
+        'company',
+        'url',
+        'introduce',
+        'location',
+        'industry',
+        'year',
+        'employees',
+        'ceo',
+        'employmentType',
+        'workLocation',
+        'salary',
+        'other',
+        'deadline',
+        'status',
+    ] as const
+
+    for (const f of fields) {
+        const value = read(f)
+        if (value !== undefined) updatePayload[f] = value
+    }
+
+    // 회사명이 변경되면 slug 재생성 (company 값이 폼에 있을 때만)
+    let newSlug = current.slug?.current || ''
+    if (typeof updatePayload.company === 'string' && updatePayload.company.trim() !== '') {
+        const company = updatePayload.company as string
+        const slugCurrent = company
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '')
+        .slice(0, 96) || `${Date.now()}`
+
+        updatePayload.slug = { _type: 'slug', current: slugCurrent }
+        newSlug = slugCurrent
+    }
+
+    await client.patch(id).set(updatePayload).commit()
+
+    if (newSlug && typeof newSlug === 'string') {
+        redirect(`/app/job/${newSlug}`)
+    } else {
+        redirect('/app/job')
+    }
+}
+
+
+export async function deleteJob(formData: FormData) {
+    const session = await auth()
+    if (!session?.user?.email) redirect('/auth/signin')
+
+    const id = formData.get('_id')?.toString()
+    if (!id) throw new Error('`_id` is required to delete a job')
+
+    const owner = await client.fetch<{ _id: string } | null>(
+        `*[_type == "user" && email == $email][0]{ _id }`,
+        { email: session.user.email }
+    )
+    if (!owner?._id) throw new Error('User document not found in Sanity')
+
+    const current = await client.fetch<{ _id: string } | null>(
+        `*[_type == "job" && _id == $id && owner._ref == $ownerId][0]{ _id }`,
+        { id, ownerId: owner._id }
+    )
+    if (!current?._id) throw new Error('Job not found or not owned by current user')
+
+    await client.delete(id)
+
+    redirect('/app/job')
+}

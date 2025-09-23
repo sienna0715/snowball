@@ -11,6 +11,7 @@ import {
     MenubarTrigger,
 } from "@/components/ui/menubar"
 import Link from "next/link";
+import { deleteCoverletter } from "../../../../../studio-hello-world/src/sanity/coverletter";
 
 type Params = {
     slug: string
@@ -55,7 +56,14 @@ export default async function CoverletterDetailPage({ params }: { params: Promis
                     </MenubarMenu>
 
                     <MenubarMenu>
-                        <MenubarTrigger>Delete</MenubarTrigger>
+                        <form action={deleteCoverletter}>
+                            <input type="hidden" name="_id" value={coverletter._id} />
+                            <MenubarTrigger asChild>
+                                <button type="submit" className="w-full text-left">
+                                    Delete
+                                </button>
+                            </MenubarTrigger>
+                        </form>
                     </MenubarMenu>
                 </Menubar>
 

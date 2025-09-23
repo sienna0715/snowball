@@ -1,6 +1,6 @@
 // app/(auth)/layout.tsx  ← 서버 컴포넌트
 import type { Metadata } from "next";
-import AuthContext from "@/context/AuthContext";
+
 import "../globals.css";
 
 export const metadata: Metadata = {
@@ -12,9 +12,5 @@ export default function AuthLayout({
 }: {
     children: React.ReactNode;
 }) {
-    return (
-        <AuthContext>
-            <main className='w-full'>{children}</main>
-        </AuthContext>
-    );
+    return <main className='w-full'>{children}</main>
 }
