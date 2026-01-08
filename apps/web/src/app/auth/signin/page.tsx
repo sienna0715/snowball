@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { signIn, providerMap } from "../../../../auth";
+import { signIn, providerMap } from "../../../../middleware/auth";
 import { AuthError } from "next-auth";
 import Link from "next/link";
 import Image from "next/image";

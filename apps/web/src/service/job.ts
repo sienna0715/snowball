@@ -3,7 +3,7 @@
 // import path from "path";
 // import { promises as fs } from 'fs';
 import { client } from "../../studio-hello-world/src/sanity/client";
-import { auth } from "../../auth";
+import { auth } from "../../middleware/auth";
 import { redirect } from "next/navigation";
 
 // export async function getJobs(): Promise<Job[]> {

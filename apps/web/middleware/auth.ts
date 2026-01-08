@@ -3,7 +3,7 @@ import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import type { Provider } from "next-auth/providers";
 import type { DefaultSession } from "next-auth";
-import addUser from "./studio-hello-world/src/sanity/user";
+import addUser from "../studio-hello-world/src/sanity/user";
 
 
 // 타입 확장 : 기본 타입에는 username 같은 커스텀 필드가 없음 그래서 Session을 확장해서 추가 필드를 넣은 것

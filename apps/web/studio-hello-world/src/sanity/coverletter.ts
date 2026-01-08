@@ -1,7 +1,7 @@
 "use server"
 
 import {client} from './client'
-import {auth} from '../../../auth'
+import {auth} from '../../../middleware/auth'
 import {redirect} from 'next/navigation'
 
 function sanitizeId(input: string) {

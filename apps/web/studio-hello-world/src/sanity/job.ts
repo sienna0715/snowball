@@ -2,7 +2,7 @@
 'use server'
 
 import {client} from './client'
-import {auth} from '../../../auth'
+import {auth} from '../../../middleware/auth'
 import {redirect} from 'next/navigation'
 
 // 로그인 세션 확인 → 유저 문서 _id 조회 → 유저별로 고유한 Job _id 생성 → client.create() 저장
