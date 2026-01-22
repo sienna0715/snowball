@@ -1,6 +1,3 @@
-console.log("Hello world!");
-for (let i = 0; i < 10; i++) {
-    console.log(i);
-}
-export {};
+import express from "express";
+const app = express();
 //# sourceMappingURL=app.js.map

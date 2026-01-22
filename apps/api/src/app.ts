@@ -1,5 +1,3 @@
-console.log("Hello world!");
+import express from "express";
 
-for (let i = 0; i < 10; i++) {
-    console.log(i);
-}
+const app = express();
