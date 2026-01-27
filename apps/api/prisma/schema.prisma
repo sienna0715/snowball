@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum JobStatus {
+  BOOKMARK
+  APPLIED
+  INTERVIEW
+  OFFER
+  REJECTED
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERN
+}
+
+model User {
+  id      Int     @id @default(autoincrement())
+  email   String  @unique
+  name    String?
+  picture String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  accounts     Account[]
+  jobs         Job[]
+  coverLetters CoverLetter[]
+}
+
+model Account {
+  id                Int    @id @default(autoincrement())
+  provider          String // "google"
+  providerAccountId String // google sub
+  userId            Int
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Job {
+  id Int @id @default(autoincrement())
+
+  companyName  String
+  position     String?
+  jobUrl       String?
+  companyIntro String?
+  location     String?
+  industry     String?
+  year         Int?
+  employees    Int?
+  ceo          String?
+
+  employmentType EmploymentType
+  workLocation   String?
+  salary         String?
+  other          Json?
+
+  appliedAt DateTime?
+  deadline  DateTime?
+  status    JobStatus
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  coverLetters CoverLetter[]
+
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+
+  @@index([userId])
+  @@index([status])
+}
+
+model CoverLetter {
+  id          Int     @id @default(autoincrement())
+  title       String
+  content     String
+  companyName String?
+
+  jobId Int?
+  job   Job? @relation(fields: [jobId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+}

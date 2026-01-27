@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: snowball-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: snowball
+      POSTGRES_PASSWORD: TRUKXdlrrqR4Olwg
+      POSTGRES_DB: snowball_dev
+    volumes:
+      - snowball_pgdata:/var/lib/postgresql/data
+
+volumes:
+  snowball_pgdata:
