@@ -1,0 +1,1 @@
+// Prisma 쿼리만 담당(find/create/upsert)
