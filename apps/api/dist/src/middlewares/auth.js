@@ -12,6 +12,4 @@ export async function authMiddleware(req, res, next) {
         return res.status(401).json({ message: "Unauthorized👿" });
     }
 }
-// Authorization 헤더의 JWT 검증해서 req.userId 주입
-//	idToken 입력 검증(zod)
 //# sourceMappingURL=auth.js.map

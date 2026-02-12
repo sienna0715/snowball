@@ -7,8 +7,8 @@ import helmet from "helmet";
 import cors from "cors";
 // Routes
 import authRouter from "./routes/auth.js";
-import jobRouter from "./routes/job.js";
-import coverletterRouter from "./routes/coverletter.js";
+import jobRouter from "./routes/jobs.js";
+import coverletterRouter from "./routes/coverletters.js";
 const app = express();
 // middleware
 app.use(cookieParser());

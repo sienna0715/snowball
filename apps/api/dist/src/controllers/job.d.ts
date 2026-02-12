@@ -1,7 +1,8 @@
-import type { Request, Response } from "express";
-export declare function getJobs(req: Request, res: Response): Promise<void>;
-export declare function getJob(req: Request, res: Response): Promise<void>;
-export declare function createJob(req: Request, res: Response): Promise<void>;
-export declare function updateJob(req: Request, res: Response): Promise<void>;
-export declare function deleteJob(req: Request, res: Response): Promise<void>;
+export declare const jobsController: {
+    create: import("express").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>;
+    list: import("express").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>;
+    find: import("express").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>;
+    update: import("express").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>;
+    delete: import("express").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>;
+};
 //# sourceMappingURL=job.d.ts.map

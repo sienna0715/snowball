@@ -1,16 +1,25 @@
-export async function getJobs(req, res) {
-    // console.log("GET /jobs", req, res)
-}
-export async function getJob(req, res) {
-    // console.log("GET /jobs/jobId", req, res)
-}
-export async function createJob(req, res) {
-    // console.log("POST /jobs", req, res)
-}
-export async function updateJob(req, res) {
-    // console.log("PATCH /jobs/jobId", req, res)
-}
-export async function deleteJob(req, res) {
-    // console.log("DELETE /jobs/jobId", req, res)
-}
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { success } from "../utils/response.js";
+export const jobsController = {
+    create: asyncHandler(async (_req, res) => {
+        console.log("POST /jobs", _req, res);
+        return success(res, null);
+    }),
+    list: asyncHandler(async (_req, res) => {
+        console.log("GET /jobs", _req, res);
+        return success(res, null);
+    }),
+    find: asyncHandler(async (_req, res) => {
+        console.log("GET /jobs/jobId", _req, res);
+        return success(res, null);
+    }),
+    update: asyncHandler(async (_req, res) => {
+        console.log("PATCH /jobs/jobId", _req, res);
+        return success(res, null);
+    }),
+    delete: asyncHandler(async (_req, res) => {
+        console.log("DELETE /jobs/jobId", _req, res);
+        return success(res, null);
+    }),
+};
 //# sourceMappingURL=job.js.map

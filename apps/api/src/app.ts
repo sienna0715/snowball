@@ -9,8 +9,8 @@ import cors from "cors";
 
 // Routes
 import authRouter from "./routes/auth.js";
-import jobRouter from "./routes/job.js";
-import coverletterRouter from "./routes/coverletter.js";
+import jobRouter from "./routes/jobs.js";
+import coverletterRouter from "./routes/coverletters.js";
 
 const app = express();
 
@@ -26,7 +26,6 @@ app.use(express.json());
 app.use("/auth", authRouter);
 app.use("/jobs", jobRouter);
 app.use("/coverletters", coverletterRouter);
-
 
 app.use((req, _res, next) => {
   console.log(req.method, req.url);
