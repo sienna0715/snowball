@@ -1,4 +1,4 @@
-import "dotenv/config";
+// import "dotenv/config";
 import { z } from "zod";
 const EnvSchema = z
     .object({
@@ -28,5 +28,8 @@ const EnvSchema = z
         });
     }
 });
+if (process.env.NODE_ENV !== "production") {
+    await import("dotenv/config");
+}
 export const env = EnvSchema.parse(process.env);
 //# sourceMappingURL=env.js.map

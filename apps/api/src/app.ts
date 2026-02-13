@@ -14,6 +14,9 @@ import coverletterRouter from "./routes/coverletters.js";
 
 const app = express();
 
+// proxy
+app.set("trust proxy", 1);
+
 // middleware
 app.use(cookieParser());
 app.use(helmet());
@@ -35,6 +38,8 @@ app.use((req, _res, next) => {
 // Error handling
 app.use(errorMiddleware);
 
-app.listen(env.HOST_PORT, () => {
-    console.log(`Server running on ${env.HOST_PORT}`);
+const port = Number(process.env.PORT) || Number(env.HOST_PORT) || 8080;
+
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Server running on ${port}`);
 });

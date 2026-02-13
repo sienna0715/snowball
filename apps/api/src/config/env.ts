@@ -1,4 +1,4 @@
-import "dotenv/config";
+// import "dotenv/config";
 import { z } from "zod";
 
 const EnvSchema = z
@@ -31,6 +31,10 @@ const EnvSchema = z
             });
         }
     });
+
+if (process.env.NODE_ENV !== "production") {
+    await import("dotenv/config");
+}
 
 export type Env = z.infer<typeof EnvSchema>;
 export const env = EnvSchema.parse(process.env);

@@ -7,10 +7,12 @@ import { signSession } from "./session.js";
 import { HttpError } from "../utils/error.js";
 // Auth
 import { getGoogleAuthUrl, handleCallback, } from "../auth/google.js";
+const isProd = env.NODE_ENV === "production";
 const cookieOpts = {
     httpOnly: true,
-    sameSite: "lax",
-    secure: env.NODE_ENV === "production",
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax",
+    path: "/",
 };
 function newState() {
     return crypto.randomBytes(16).toString("hex");
@@ -84,12 +86,46 @@ export const authService = {
         if (!savedState || !state || savedState !== state) {
             throw new HttpError("Invalid state", 401);
         }
-        res.clearCookie("oauth_state");
+        res.clearCookie("oauth_state", cookieOpts);
         const origin = `${req.protocol}://${req.get("host")}`;
         const currentUrl = new URL(req.originalUrl, origin);
-        const profile = await providers[provider].handleCallback(currentUrl, savedState);
-        const user = await createUser(profile);
-        const sessionToken = await signSession({ userId: user.id });
+        console.log("cookies:", req.headers.cookie);
+        console.log("savedState:", req.cookies?.oauth_state);
+        console.log("queryState:", req.query.state);
+        console.log("protocol/host:", req.protocol, req.get("host"));
+        console.log("originalUrl:", req.originalUrl);
+        let profile;
+        try {
+            profile = await providers[provider].handleCallback(currentUrl, savedState);
+        }
+        catch (e) {
+            console.error("[OAuth] handleCallback failed", {
+                origin,
+                currentUrl: currentUrl.toString(),
+                query: req.query,
+                err: e,
+            });
+            throw e;
+        }
+        let user;
+        try {
+            user = await createUser(profile);
+        }
+        catch (e) {
+            console.error("[OAuth] createUser failed", { profile, err: e });
+            throw e;
+        }
+        let sessionToken;
+        try {
+            sessionToken = await signSession({ userId: user.id });
+        }
+        catch (e) {
+            console.error("[OAuth] signSession failed", {
+                userId: user.id,
+                err: e,
+            });
+            throw e;
+        }
         res.cookie("session", sessionToken, {
             ...cookieOpts,
             maxAge: 7 * 24 * 60 * 60 * 1000,
