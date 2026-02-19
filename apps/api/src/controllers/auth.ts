@@ -3,6 +3,8 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { authService } from "../services/auth.js";
 import { env } from "../config/env.js";
 import { HttpError } from "../utils/error.js";
+import { listProviders } from "../auth/providers.js";
+import { success } from "../utils/response.js";
 
 function requireParam(value: unknown, name: string): string {
     if (typeof value !== "string" || value.length === 0) {
@@ -12,6 +14,11 @@ function requireParam(value: unknown, name: string): string {
 }
 
 export const authController = {
+    providers: asyncHandler(async (_req: Request, res: Response) => {
+        const data = listProviders();
+        return res.json({ ok: true, data });
+    }),
+    
     login: asyncHandler(async (req: Request, res: Response) => {
         const provider = requireParam(req.params.provider, "provider");
         const url = await authService.startLogin(provider, res);
@@ -29,7 +36,8 @@ export const authController = {
     me: asyncHandler(async (req: Request, res: Response) => {
         const userId = (req as any).userId as number;
         const user = await authService.getMe(userId);
-        return res.json({ user });
+        
+        return success(res, user);
     }),
 
     logout: asyncHandler(async (_req: Request, res: Response) => {

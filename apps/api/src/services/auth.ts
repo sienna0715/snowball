@@ -11,11 +11,7 @@ import { signSession } from "./session.js";
 import { HttpError } from "../utils/error.js";
 
 // Auth
-import {
-    getGoogleAuthUrl,
-    handleCallback,
-    type OAuthProfile,
-} from "../auth/google.js";
+import { getProvider, type OAuthProfile } from "../auth/providers.js";
 
 const isProd = env.NODE_ENV === "production";
 const cookieOpts: CookieOptions = {
@@ -27,22 +23,6 @@ const cookieOpts: CookieOptions = {
 
 function newState() {
     return crypto.randomBytes(16).toString("hex");
-}
-
-const providers = {
-    google: {
-        getAuthUrl: getGoogleAuthUrl,
-        handleCallback,
-    },
-} as const;
-
-type Provider = keyof typeof providers;
-
-function asProvider(p: string): Provider {
-    if (!Object.prototype.hasOwnProperty.call(providers, p)) {
-        throw new HttpError("Unsupported provider", 400);
-    }
-    return p as Provider;
 }
 
 async function createUser(profile: OAuthProfile) {
@@ -90,7 +70,7 @@ async function createUser(profile: OAuthProfile) {
 
 export const authService = {
     async startLogin(providerRaw: string, res: Response) {
-        const provider = asProvider(providerRaw);
+        const provider = getProvider(providerRaw);
 
         const state = newState();
         res.cookie("oauth_state", state, {
@@ -98,12 +78,12 @@ export const authService = {
             maxAge: 5 * 60 * 1000,
         });
 
-        return providers[provider].getAuthUrl(state);
+        return provider.getAuthUrl(state);
     },
 
     async finishLogin(args: { provider: string; req: Request; res: Response }) {
         const { req, res } = args;
-        const provider = asProvider(args.provider);
+        const provider = getProvider(args.provider);
 
         const savedState = req.cookies?.oauth_state;
         const state =
@@ -114,21 +94,12 @@ export const authService = {
         }
         res.clearCookie("oauth_state", cookieOpts);
 
-        const origin = `${req.protocol}://${req.get("host")}`;
+        const origin = process.env.ORIGIN_URL ?? `${req.protocol}://${req.get("host")}`;
         const currentUrl = new URL(req.originalUrl, origin);
-
-        console.log("cookies:", req.headers.cookie);
-        console.log("savedState:", req.cookies?.oauth_state);
-        console.log("queryState:", req.query.state);
-        console.log("protocol/host:", req.protocol, req.get("host"));
-        console.log("originalUrl:", req.originalUrl);
 
         let profile: OAuthProfile;
         try {
-            profile = await providers[provider].handleCallback(
-                currentUrl,
-                savedState,
-            );
+            profile = await provider.handleCallback(currentUrl, savedState);
         } catch (e) {
             console.error("[OAuth] handleCallback failed", {
                 origin,

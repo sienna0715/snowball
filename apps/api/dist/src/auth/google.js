@@ -28,7 +28,7 @@ export async function handleCallback(currentUrl, expectedState) {
         });
     }
     catch (err) {
-        // state 불일치나 grant 실패 등: 인증 흐름 자체가 유효하지 않음
+        // state 불일치
         throw new HttpError("Invalid OAuth callback request.", 401, {
             cause: err,
         });

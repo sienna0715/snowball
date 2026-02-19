@@ -1,14 +1,7 @@
 import * as oidc from "openid-client";
 import { env } from "../config/env.js";
 import { HttpError } from "../utils/error.js";
-
-export type OAuthProfile = {
-    provider: "google";
-    providerAccountId: string;
-    email?: string;
-    name?: string;
-    picture?: string;
-};
+import type { OAuthProfile } from "./providers.js";
 
 // Google OIDC discovery Cache
 type OidcConfig = Awaited<ReturnType<typeof oidc.discovery>>;
@@ -53,7 +46,7 @@ export async function handleCallback(
             expectedState,
         });
     } catch (err) {
-        // state 불일치나 grant 실패 등: 인증 흐름 자체가 유효하지 않음
+        // state 불일치
         throw new HttpError("Invalid OAuth callback request.", 401, {
             cause: err,
         });

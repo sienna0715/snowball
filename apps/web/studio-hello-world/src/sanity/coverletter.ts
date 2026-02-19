@@ -1,24 +1,34 @@
-"use server"
+'use server';
 
 import {client} from './client'
-import {auth} from '../../../middleware/auth'
+import {cookies} from 'next/headers'
 import {redirect} from 'next/navigation'
+import {getMe} from '../../../src/lib/user'
 
-function sanitizeId(input: string) {
-    return input.replace(/[^A-Za-z0-9_.-]/g, '-')
+type User = {
+    userId: string;
+    email?: string | null;
+};
+
+async function requireUser(): Promise<User> {
+    const cookieStore = await cookies();
+    const cookieHeader = cookieStore
+        .getAll()
+        .map((c) => `${c.name}=${c.value}`)
+        .join("; ");
+    const user = await getMe({ cookie: cookieHeader });
+
+    if (!user?.id) redirect("/auth")
+    
+    return {
+        userId: String(user.id),
+        email: user.email ?? null,
+    };
 }
 
-export default async function addCoverletter(formData: FormData) {
-    const session = await auth()
-    if (!session?.user?.email) redirect('/auth/signin')
-    
-    const owner = await client.fetch<{ _id: string } | null>(
-        `*[_type == "user" && email == $email][0]{ _id }`, 
-        { email: session!.user!.email, }
-    )
-    if (!owner?._id) throw new Error('User document not found in Sanity')
-    
-    const ownerId = sanitizeId(owner._id as string)
+export async function addCoverletter(formData: FormData) {
+    const user = await requireUser()
+    const ownerId = sanitizeId(user.userId)
     const suffix = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
     const coverletterId = `coverletter.${ownerId}.${suffix}`
 
@@ -39,40 +49,31 @@ export default async function addCoverletter(formData: FormData) {
         _id: coverletterId,
         _type: 'coverletter',
         slug,
-        owner: { _type: 'reference', _ref: owner._id },
+        userId: user.userId,
         date: formData.get('date')?.toString() || '',
         company,
         title: formData.get('title')?.toString() || '',
-        content:  formData.get('content')?.toString() || '',
+        content: formData.get('content')?.toString() || '',
     }
 
     await client.create(data)
-    redirect('/app/coverletter')
+    redirect('/coverletters')
 }
 
 export async function updateCoverletter(formData: FormData) {
-
-    const session = await auth()
-    if (!session?.user?.email) redirect('/auth/signin')
-
+    const user = await requireUser()
     const id = formData.get('_id')?.toString()
-    if (!id) throw new Error('`_id` is required to update a coverletter')
 
-    // 로그인 유저의 Sanity user 문서 _id 확인
-    const owner = await client.fetch<{ _id: string } | null>(
-        `*[_type == "user" && email == $email][0]{ _id }`,
-        { email: session.user.email }
-    )
-    if (!owner?._id) throw new Error('User document not found in Sanity')
+    if (!id) throw new Error('`_id` is required to update a coverletter')
 
     // 수정 대상 문서가 내 문서인지 검증 + 현재 slug 조회
     const current = await client.fetch<{
         _id: string
-        slug?: { current?: string }
-    } | null>(
-        `*[_type == "coverletter" && _id == $id && owner._ref == $ownerId][0]{ _id, slug }`,
-        { id, ownerId: owner._id }
-    )
+        slug?: {current?: string}
+    } | null>(`*[_type == "coverletter" && _id == $id && userId == $userId][0]{ _id, slug }`, {
+        id,
+        userId: user.userId,
+    })
     if (!current?._id) throw new Error('Coverletter not found or not owned by current user')
 
     // FormData → 업데이트 payload 구성
@@ -92,14 +93,15 @@ export async function updateCoverletter(formData: FormData) {
     let newSlug = current.slug?.current || ''
     if (typeof updatePayload.company === 'string' && updatePayload.company.trim() !== '') {
         const company = updatePayload.company as string
-        const slugCurrent = company
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)+/g, '')
-        .slice(0, 96) || `${Date.now()}`
+        const slugCurrent =
+        company
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)+/g, '')
+            .slice(0, 96) || `${Date.now()}`
 
-        updatePayload.slug = { _type: 'slug', current: slugCurrent }
+        updatePayload.slug = {_type: 'slug', current: slugCurrent}
         newSlug = slugCurrent
     }
 
@@ -108,34 +110,29 @@ export async function updateCoverletter(formData: FormData) {
 
     // 완료 후 상세 페이지로 이동 (slug가 없다면 목록으로 fallback)
     if (newSlug && typeof newSlug === 'string') {
-        redirect(`/app/coverletter/${newSlug}`)
+        redirect(`/coverletters/${newSlug}`)
     } else {
-        redirect('/app/coverletter')
+        redirect('/coverletters')
     }
 }
 
-
 export async function deleteCoverletter(formData: FormData) {
-    const session = await auth()
-    if (!session?.user?.email) redirect('/auth/signin')
-
+    const user = await requireUser()
     const id = formData.get('_id')?.toString()
+
     if (!id) throw new Error('`_id` is required to delete a coverletter')
 
-    const owner = await client.fetch<{ _id: string } | null>(
-        `*[_type == "user" && email == $email][0]{ _id }`,
-        { email: session.user.email }
-    )
-    if (!owner?._id) throw new Error('User document not found in Sanity')
-
     // 삭제 대상이 내 문서인지 검증
-    const current = await client.fetch<{ _id: string } | null>(
-        `*[_type == "coverletter" && _id == $id && owner._ref == $ownerId][0]{ _id }`,
-        { id, ownerId: owner._id }
+    const current = await client.fetch<{_id: string} | null>(
+        `*[_type == "coverletter" && _id == $id && userId == $userId][0]{ _id }`,
+        {id, userId: user.userId},
     )
     if (!current?._id) throw new Error('Coverletter not found or not owned by current user')
 
     await client.delete(id)
+    redirect('/coverletters')
+}
 
-    redirect('/app/coverletter')
+function sanitizeId(input: string) {
+    return input.replace(/[^A-Za-z0-9_.-]/g, '-')
 }

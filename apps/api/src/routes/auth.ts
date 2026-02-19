@@ -5,6 +5,7 @@ import { authMiddleware } from "../middlewares/auth.js";
 const router = express.Router();
 
 // OAuth
+router.get("/providers", authController.providers);
 router.get("/:provider/login", authController.login);
 router.get("/:provider/callback", authController.oauth);
 

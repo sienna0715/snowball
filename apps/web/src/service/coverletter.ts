@@ -1,60 +1,64 @@
-"use server"
+"use server";
 // import { promises as fs } from "fs";
 // import path from "path";
 import { client } from "../../studio-hello-world/src/sanity/client";
-import { auth } from "../../middleware/auth";
+import { cookies } from "next/headers";
+import { getMe } from "@/lib/user";
+import { ApiError } from "@/lib/api";
 import { redirect } from "next/navigation";
 
-// export type Coverletter = {
-//     date: Date;
-//     title: "string";
-//     target: "string";
-// }
+type User = {
+    userId: string;
+    email?: string | null;
+};
 
-// export async function getCoverletter(): Promise<Coverletter[]> {
-//     const filePath = path.join(process.cwd(), 'data', 'coverletter.json');
+async function requireUser(): Promise<User> {
+    const cookieStore = await cookies();
+    const cookieHeader = cookieStore
+        .getAll()
+        .map((c) => `${c.name}=${c.value}`)
+        .join("; ");
+    let user;
 
-//     return await fs.readFile(filePath, 'utf-8')
-//     .then<Coverletter[]>(JSON.parse)
-//     .then(datas => datas.sort((a, b) => (a.date > b.date) ? -1 : 1));
-// } 
+    try {
+        user = await getMe({ cookie: cookieHeader });
+    } catch (e) {
+        if (e instanceof ApiError && e.status === 401) {
+            redirect("/auth");
+        }
+        throw e;
+    }
+
+    if (!user?.id) redirect("/auth");
+
+    return {
+        userId: String(user.id),
+        email: user.email ?? null,
+    };
+}
 
 export async function getCoverletters(limit = 100) {
-    const session = await auth();
-    if (!session?.user?.email) redirect("/auth/signin");
-
-    const owner = await client.fetch<{ _id: string } | null>(
-        `*[_type == "user" && email == $email][0]{ _id }`,
-        { email: session!.user!.email }
-    );
-    if (!owner?._id) return [];
+    const user = await requireUser();
 
     const coverletters = await client.fetch(
-        `*[_type=="coverletter" && references($ownerId)]
-        | order(_createdAt desc)[0...$limit]{
-            _id, slug, date, title, company, content
-        }`,
-        { ownerId: owner._id, limit }
+        `*[_type=="coverletter" && userId == $userId]
+      | order(_createdAt desc)[0...$limit]{
+        _id, slug, date, title, company, content
+      }`,
+        { userId: user.userId, limit },
     );
 
     return coverletters;
 }
 
 export async function getCoverletter(slug: string) {
-    const session = await auth();
-    if (!session?.user?.email) redirect("/auth/signin");
-
-    const owner = await client.fetch<{ _id: string } | null>(
-        `*[_type == "user" && email == $email][0]{ _id }`,
-        { email: session!.user!.email }
-    );
-    if (!owner?._id) return [];
+    const user = await requireUser();
 
     const coverletter = await client.fetch(
-        `*[_type=="coverletter" && slug.current==$slug && references($ownerId)][0]{
-        _id, slug, date, title, company, content
-        }`,
-        { slug, ownerId: owner._id }
+        `*[_type=="coverletter" && slug.current==$slug && userId == $userId][0]{
+      _id, slug, date, title, company, content
+    }`,
+        { slug, userId: user.userId },
     );
 
     return coverletter ?? undefined;

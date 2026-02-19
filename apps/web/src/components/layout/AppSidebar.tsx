@@ -1,14 +1,8 @@
 "use client";
 
-import {
-    Calendar,
-    Home,
-    Inbox,
-    NotebookPen,
-    Settings,
-    User,
-    LogOut,
-} from "lucide-react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Home, Inbox, NotebookPen, Settings, User, LogOut } from "lucide-react";
 
 import {
     Sidebar,
@@ -22,13 +16,14 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/components/ui/sidebar";
+
 import Link from "next/link";
 import Image from "next/image";
 import SidebarButton from "../SidebarButton";
-import { useSession, signOut } from "next-auth/react";
-import { Button } from "../ui/button";
 
-// Menu items.
+import { getMe } from "@/lib/user"; // ✅ 공용코드 사용 (auth/me)
+import { apiFetch } from "@/lib/api";
+
 const items = [
     {
         title: "홈",
@@ -37,29 +32,60 @@ const items = [
     },
     {
         title: "내 지원 현황",
-        url: "/app/job",
+        url: "/jobs",
         icon: Inbox,
     },
     {
         title: "자기소개서 관리",
-        url: "/app/coverletter",
+        url: "/coverletters",
         icon: NotebookPen,
     },
     {
-        title: "캘린더",
-        url: "/app/calendar",
-        icon: Calendar,
-    },
-    {
         title: "설정",
-        url: "/app/setting",
+        url: "/settings",
         icon: Settings,
     },
 ];
 
+type User = {
+    id: number;
+    email: string;
+    name?: string | null;
+    picture?: string | null;
+};
+
 export function AppSidebar() {
-    const { data: session } = useSession();
-    const user = session?.user;
+    const router = useRouter();
+    const [user, setUser] = useState<User | null>(null);
+
+    useEffect(() => {
+        let mounted = true;
+
+        async function load() {
+            try {
+                const me = await getMe();
+                if (mounted) setUser(me);
+            } catch {
+                if (mounted) setUser(null);
+            }
+        }
+
+        load();
+        return () => {
+            mounted = false;
+        };
+    }, []);
+
+    async function handleLogout() {
+        try {
+            await apiFetch<void>("/api/auth/logout", {
+                method: "POST",
+            });
+        } finally {
+            setUser(null);
+            router.refresh();
+        }
+    }
 
     return (
         <Sidebar>
@@ -85,13 +111,13 @@ export function AppSidebar() {
                                         asChild
                                         id={item.url.replace("/", "")}
                                     >
-                                        <a href={item.url}>
+                                        <Link href={item.url}>
                                             <item.icon />
                                             <SidebarButton
                                                 title={item.title}
                                                 url={item.url}
                                             />
-                                        </a>
+                                        </Link>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             ))}
@@ -101,34 +127,34 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter className='w-full p-2 mb-2'>
-                {session ? (
+                {user && (
                     <div className='w-full flex flex-row items-center gap-2 p-2 rounded-md hover:bg-sidebar-accent'>
                         <div className='w-12 h-12 bg-gray-300 rounded-lg overflow-hidden flex justify-center items-center'>
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            {user && user.image ? <img src={user.image} alt={user?.name ?? ""} referrerPolicy="no-referrer" /> : <User />}
+                            {user.picture ? (
+                                <Image
+                                    src={user.picture}
+                                    alt={user.name ?? ""}
+                                    width={48}
+                                    height={48}
+                                    className='w-full h-full object-cover'
+                                    referrerPolicy='no-referrer'
+                                />
+                            ) : (
+                                <User />
+                            )}
                         </div>
                         <div className='flex flex-col gap-1 text-sm'>
-                            <span>{user && user.name}</span>
-                            <span className='text-xs'>{user && user.email}</span>
+                            <span>{user.name ?? ""}</span>
+                            <span className='text-xs'>{user.email}</span>
                         </div>
                         <button
                             type='button'
                             className='cursor-pointer'
-                            onClick={() => signOut()}
+                            onClick={handleLogout}
                         >
                             <LogOut className='w-5 h-5 ml-2 text-gray-600' />
                         </button>
                     </div>
-                ) : (
-                    <Link href='/auth/signin'>
-                        <Button
-                            type='submit'
-                            variant='default'
-                            className='w-full flex items-center'
-                        >
-                            <span>로그인</span>
-                        </Button>
-                    </Link>
                 )}
             </SidebarFooter>
         </Sidebar>

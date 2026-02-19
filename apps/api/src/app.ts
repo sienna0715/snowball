@@ -10,7 +10,6 @@ import cors from "cors";
 // Routes
 import authRouter from "./routes/auth.js";
 import jobRouter from "./routes/jobs.js";
-import coverletterRouter from "./routes/coverletters.js";
 
 const app = express();
 
@@ -20,7 +19,12 @@ app.set("trust proxy", 1);
 // middleware
 app.use(cookieParser());
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: env.ORIGIN_URL,
+    credentials: true,
+  })
+);
 
 // parsing
 app.use(express.json());
@@ -28,7 +32,7 @@ app.use(express.json());
 // API
 app.use("/auth", authRouter);
 app.use("/jobs", jobRouter);
-app.use("/coverletters", coverletterRouter);
+// app.use("/coverletters", coverletterRouter);
 
 app.use((req, _res, next) => {
   console.log(req.method, req.url);
@@ -38,7 +42,7 @@ app.use((req, _res, next) => {
 // Error handling
 app.use(errorMiddleware);
 
-const port = Number(process.env.PORT) || Number(env.HOST_PORT) || 8080;
+const port = Number(process.env.PORT) || Number(env.HOST_PORT) || 8081;
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server running on ${port}`);
