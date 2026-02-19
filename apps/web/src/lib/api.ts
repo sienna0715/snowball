@@ -44,7 +44,6 @@ export async function apiFetch<T>(
     options: ApiFetchOptions = {},
 ): Promise<T> {
     const { cookie, headers, ...init } = options;
-
     const isAbsolute = /^https?:\/\//i.test(path);
     const base = process.env.WEB_URL || "";
 
