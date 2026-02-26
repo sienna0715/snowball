@@ -1,9 +1,9 @@
-import type { NextConfig } from "next";
+import type NextConfig from "next";
 
 const nextConfig: NextConfig = {
     compiler: { styledComponents: true },
     async rewrites() {
-        const api = process.env.API_BASE_URL;
+        const api = process.env.API_BASE_URL;    
 
         return [
             { source: "/auth/:path*", destination: `${api}/auth/:path*` },

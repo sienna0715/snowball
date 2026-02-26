@@ -28,7 +28,8 @@ export default function SignInPage() {
             try {
                 const data = await fetchAuthProviders();
                 setProviders(data);
-            } catch {
+            } catch (e) {
+                console.error("[providers] failed:", e);
                 setProviders([]);
             } finally {
                 setLoading(false);

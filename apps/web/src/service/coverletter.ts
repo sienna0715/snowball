@@ -2,7 +2,7 @@
 // import { promises as fs } from "fs";
 // import path from "path";
 import { client } from "../../studio-hello-world/src/sanity/client";
-import { cookies } from "next/headers";
+import { getCookieHeader } from "@/lib/cookies";
 import { getMe } from "@/lib/user";
 import { ApiError } from "@/lib/api";
 import { redirect } from "next/navigation";
@@ -13,11 +13,7 @@ type User = {
 };
 
 async function requireUser(): Promise<User> {
-    const cookieStore = await cookies();
-    const cookieHeader = cookieStore
-        .getAll()
-        .map((c) => `${c.name}=${c.value}`)
-        .join("; ");
+    const cookieHeader = await getCookieHeader();
     let user;
 
     try {
@@ -29,7 +25,7 @@ async function requireUser(): Promise<User> {
         throw e;
     }
 
-    if (!user?.id) redirect("/auth");
+    if (!user?.id) return redirect("/auth");
 
     return {
         userId: String(user.id),

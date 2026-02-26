@@ -1,7 +1,7 @@
 'use server';
 
 import {client} from './client'
-import {cookies} from 'next/headers'
+import { getCookieHeader } from '../../../src/lib/cookies';
 import {redirect} from 'next/navigation'
 import {getMe} from '../../../src/lib/user'
 
@@ -11,14 +11,10 @@ type User = {
 };
 
 async function requireUser(): Promise<User> {
-    const cookieStore = await cookies();
-    const cookieHeader = cookieStore
-        .getAll()
-        .map((c) => `${c.name}=${c.value}`)
-        .join("; ");
+    const cookieHeader = await getCookieHeader();
     const user = await getMe({ cookie: cookieHeader });
 
-    if (!user?.id) redirect("/auth")
+    if (!user?.id) return redirect("/auth")
     
     return {
         userId: String(user.id),

@@ -5,7 +5,7 @@ const EnvSchema = z
     NODE_ENV: z
         .enum(["development", "test", "production"])
         .default("development"),
-    HOST_PORT: z.coerce.number().int().positive().default(8081),
+    HOST_PORT: z.coerce.number().int().positive().default(8080),
     ORIGIN_URL: z.url({
         message: "ORIGIN_URL must be a valid URL",
     }),

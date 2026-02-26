@@ -1,9 +1,6 @@
-// app/(auth)/layout.tsx  ← 서버 컴포넌트
-import type { Metadata } from "next";
-
 import "../globals.css";
 
-export const metadata: Metadata = {
+export const metadata = {
     title: "Sign in - Snowball",
 };
 

@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import "./globals.css";
 import { Geist, Geist_Mono } from "next/font/google";
 
@@ -12,7 +11,7 @@ const geistMono = Geist_Mono({
     subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
+export const metadata = {
     title: {
         default: "Snowball",
         template: "%s | Snowball",

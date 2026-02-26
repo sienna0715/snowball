@@ -40,7 +40,7 @@ export const dynamic = "force-dynamic";
 
 function parseJobId(slug: string) {
     const n = Number(slug);
-    if (!Number.isInteger(n) || n <= 0) return null;
+    if (!Number.isInteger(n) || n <= 0) redirect("/jobs");
     return n;
 }
 
@@ -58,7 +58,7 @@ export default async function JobDetailPage({ params }: JobProps) {
         job = null;
     }
 
-    if (!job) notFound();
+    if (!job) return notFound();
 
     const companyRows: Array<{ label: string; value: unknown }> = [
         { label: "위치", value: job.location },

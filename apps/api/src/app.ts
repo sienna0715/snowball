@@ -23,8 +23,13 @@ app.use(
   cors({
     origin: env.ORIGIN_URL,
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+// 프리플라이트 처리
+app.options(/.*/, cors());
 
 // parsing
 app.use(express.json());
@@ -35,14 +40,14 @@ app.use("/jobs", jobRouter);
 // app.use("/coverletters", coverletterRouter);
 
 app.use((req, _res, next) => {
-  console.log(req.method, req.url);
+  // console.log(req.method, req.url);
   next();
 });
 
 // Error handling
 app.use(errorMiddleware);
 
-const port = Number(process.env.PORT) || Number(env.HOST_PORT) || 8081;
+const port = Number(process.env.PORT) || Number(env.HOST_PORT) || 8080;
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server running on ${port}`);

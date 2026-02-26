@@ -8,6 +8,6 @@ export async function getCookieHeader() {
     const store = await cookies();
     return store
         .getAll()
-        .map((c) => `${c.name}=${c.value}`)
+        .map((c: ReturnType<typeof store.getAll>[number]) => `${c.name}=${c.value}`)
         .join("; ");
 }

@@ -12,15 +12,14 @@ export const dynamic = "force-dynamic";
 
 function parseJobId(slug: string) {
     const n = Number(slug);
-    if (!Number.isInteger(n) || n <= 0) return null;
+    if (!Number.isInteger(n) || n <= 0) redirect("/jobs");
     return n;
 }
 
 export default async function EditJobPage({ params }: JobProps) {
     const { slug } = params;
     const jobId = parseJobId(slug);
-    if (!jobId) redirect("/jobs");
-
+    
     const cookieHeader = await getCookieHeader();
 
     let job: Awaited<ReturnType<typeof getJob>> | null = null;
@@ -30,7 +29,7 @@ export default async function EditJobPage({ params }: JobProps) {
         job = null;
     }
 
-    if (!job) notFound();
+    if (!job) return notFound();
 
     return (
         <EditJobForm job={job} onSubmit={updateJobAction.bind(null, job.id)} />
