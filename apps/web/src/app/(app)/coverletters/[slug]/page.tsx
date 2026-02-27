@@ -3,9 +3,9 @@ import { redirect } from "next/navigation";
 
 import {
     Menubar,
+    MenubarMenu,
     MenubarContent,
     MenubarItem,
-    MenubarMenu,
     MenubarSeparator,
     MenubarShortcut,
     MenubarTrigger,
@@ -13,13 +13,13 @@ import {
 import Link from "next/link";
 import { deleteCoverletter } from "../../../../../studio-hello-world/src/sanity/coverletter";
 
-type Params = {
-    slug: string
-}
+type CoverletterProps = {
+    params: Promise<{ slug: string }>;
+};
 
 export const dynamic = "force-dynamic"; // 항상 요청 시 서버에서 렌더 되도록
 
-export default async function CoverletterDetailPage({ params }: { params: Promise<Params> }) {
+export default async function CoverletterDetailPage({ params }: CoverletterProps) {
     const { slug } = await params;
     const coverletter = await getCoverletter(slug);
 

@@ -32,10 +32,6 @@ export default function CreateJobPage() {
                     <span className='min-w-25'>회사명</span>
                     <Input name='companyName' className='max-w-3xl' required />
                 </Label>
-                <Label htmlFor='position' className='flex items-center'>
-                    <span className='min-w-25'>직무</span>
-                    <Input name='position' className='max-w-3xl' required />
-                </Label>
                 <Label htmlFor='jobUrl' className='flex items-center'>
                     <span className='min-w-25'>공고 링크</span>
                     <Input name='jobUrl' className='max-w-3xl' />
@@ -43,10 +39,6 @@ export default function CreateJobPage() {
                 <Label htmlFor='companyIntro' className='flex items-start'>
                     <span className='min-w-25 pt-2'>회사 소개</span>
                     <Textarea name='companyIntro' className='max-w-3xl' />
-                </Label>
-                <Label htmlFor='location' className='flex items-center'>
-                    <span className='min-w-25'>위치</span>
-                    <Input name='location' className='max-w-3xl' />
                 </Label>
                 <Label htmlFor='industry' className='flex items-center'>
                     <span className='min-w-25'>업종</span>
@@ -60,10 +52,15 @@ export default function CreateJobPage() {
                     <span className='min-w-25'>사원수</span>
                     <Input name='employees' className='max-w-3xl' />
                 </Label>
+                <Label htmlFor='location' className='flex items-center'>
+                    <span className='min-w-25'>위치</span>
+                    <Input name='location' className='max-w-3xl' />
+                </Label>
                 <Label htmlFor='ceo' className='flex items-center'>
                     <span className='min-w-25'>대표명</span>
                     <Input name='ceo' className='max-w-3xl' />
                 </Label>
+                
                 <Label htmlFor='employmentType' className='flex items-center'>
                     <span className='min-w-25'>근무 형태</span>
                     <input
@@ -96,6 +93,7 @@ export default function CreateJobPage() {
                     <span className='min-w-25'>급여</span>
                     <Input name='salary' className='max-w-3xl' />
                 </Label>
+
                 <Label htmlFor='status' className='flex items-center'>
                     <span className='min-w-25'>채용절차</span>
                     <input type='hidden' name='status' value={status} />
@@ -115,21 +113,12 @@ export default function CreateJobPage() {
                         </SelectContent>
                     </Select>
                 </Label>
-                {/* <Label htmlFor='email' className='flex items-center'>
-                    <span className='min-w-25'>참조</span>
-                    <Input className='max-w-3xl' />
-                </Label>
-                <Label htmlFor='email' className='flex items-center'>
-                    <span className='min-w-25'>채용절차</span>
-                    <Input className='max-w-3xl' />
-                </Label>
-                
-                <Label htmlFor='email' className='flex items-start'>
-                    <span className='min-w-25 pt-2'>문화 / 복리후생</span>
-                    <Textarea className='max-w-3xl' />
+                <Label htmlFor='position' className='flex items-center'>
+                    <span className='min-w-25'>직무</span>
+                    <Input name='position' className='max-w-3xl' required />
                 </Label>
                 <Label htmlFor='email' className='flex items-start'>
-                    <span className='min-w-25 pt-2'>담당업무</span>
+                    <span className='min-w-25 pt-2'>주요업무</span>
                     <Textarea className='max-w-3xl' />
                 </Label>
                 <Label htmlFor='email' className='flex items-start'>
@@ -139,7 +128,12 @@ export default function CreateJobPage() {
                 <Label htmlFor='email' className='flex items-start'>
                     <span className='min-w-25 pt-2'>우대사항</span>
                     <Textarea className='max-w-3xl' />
-                </Label> */}
+                </Label>
+                <Label htmlFor='email' className='flex items-start'>
+                    <span className='min-w-25 pt-2'>문화 / 복리후생</span>
+                    <Textarea className='max-w-3xl' />
+                </Label>
+
                 <Button type='submit' className='mt-4 cursor-pointer'>
                     <Save />
                     저장하기

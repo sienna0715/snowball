@@ -59,15 +59,6 @@ export default function EditJobForm({ job, onSubmit }: Props) {
             </Label>
 
             <Label className='flex items-center'>
-                <span className='min-w-25'>위치</span>
-                <Input
-                    name='location'
-                    className='max-w-3xl'
-                    defaultValue={job.location ?? ""}
-                />
-            </Label>
-
-            <Label className='flex items-center'>
                 <span className='min-w-25'>업종</span>
                 <Input
                     name='industry'
@@ -95,6 +86,15 @@ export default function EditJobForm({ job, onSubmit }: Props) {
             </Label>
 
             <Label className='flex items-center'>
+                <span className='min-w-25'>위치</span>
+                <Input
+                    name='location'
+                    className='max-w-3xl'
+                    defaultValue={job.location ?? ""}
+                />
+            </Label>
+
+            <Label className='flex items-center'>
                 <span className='min-w-25'>대표명</span>
                 <Input
                     name='ceo'
@@ -105,7 +105,7 @@ export default function EditJobForm({ job, onSubmit }: Props) {
 
             <input type='hidden' name='employmentType' value={employmentType} />
             <Label className='flex items-center'>
-                <span className='min-w-25'>근무 형태</span>
+                <span className='min-w-25'>근무형태</span>
                 <Select
                     value={employmentType}
                     onValueChange={(v) =>

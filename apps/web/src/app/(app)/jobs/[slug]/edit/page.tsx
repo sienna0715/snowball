@@ -5,7 +5,7 @@ import { updateJobAction } from "../../actions";
 import EditJobForm from "./EditJobForm";
 
 type JobProps = {
-    params: { slug: string };
+    params: Promise<{ slug: string }>;
 };
 
 export const dynamic = "force-dynamic";
@@ -17,7 +17,7 @@ function parseJobId(slug: string) {
 }
 
 export default async function EditJobPage({ params }: JobProps) {
-    const { slug } = params;
+    const { slug } = await params;
     const jobId = parseJobId(slug);
     
     const cookieHeader = await getCookieHeader();

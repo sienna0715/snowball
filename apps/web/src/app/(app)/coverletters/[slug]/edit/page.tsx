@@ -8,11 +8,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Save } from "lucide-react";
 import { redirect } from "next/navigation";
 
-type Params = {
-    slug: string
-}
+type CoverletterProps = {
+    params: Promise<{ slug: string }>;
+};
 
-export default async function EditCoverletterPage({ params }: { params: Promise<Params> }) {
+export default async function EditCoverletterPage({ params }: CoverletterProps) {
     const { slug } = await params;
     const coverletter = await getCoverletter(slug);
 
