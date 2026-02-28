@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import { updateJob } from "@/lib/jobs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,21 +15,113 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
-import type { Job } from "@/lib/jobsType";
+import type { Job, JobUpdateInput } from "@/lib/jobsType";
 
 type Props = {
     job: Job;
-    onSubmit: (formData: FormData) => void;
 };
 
-export default function EditJobForm({ job, onSubmit }: Props) {
+function s(fd: FormData, key: string): string {
+    return String(fd.get(key) ?? "").trim();
+}
+
+function sOrNull(fd: FormData, key: string): string | null {
+    const v = s(fd, key);
+    return v ? v : null;
+}
+
+function numOrNull(fd: FormData, key: string): number | null {
+    const v = s(fd, key);
+    if (!v) return null;
+    const n = Number(v);
+    return Number.isNaN(n) ? null : n;
+}
+
+function dateIsoOrNull(fd: FormData, key: string): string | null {
+    const v = s(fd, key);
+    if (!v) return null;
+    const d = new Date(v);
+    return Number.isNaN(d.getTime()) ? null : d.toISOString();
+}
+
+function linesToArray(fd: FormData, key: string): string[] {
+    const raw = String(fd.get(key) ?? "");
+    const normalized = raw.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+    return normalized
+        .split(/\n+/)
+        .map((v) => v.trim())
+        .filter(Boolean);
+}
+
+function csvToArray(fd: FormData, key: string): string[] {
+    const raw = s(fd, key);
+    if (!raw) return [];
+    return raw
+        .split(",")
+        .map((v) => v.trim())
+        .filter(Boolean);
+}
+
+function buildUpdatePayload(fd: FormData, job: Job): JobUpdateInput {
+    return {
+        // required in UI
+        companyName: s(fd, "companyName"),
+
+        // nullable strings
+        companyIntro: sOrNull(fd, "companyIntro"),
+        jobUrl: sOrNull(fd, "jobUrl"),
+        location: sOrNull(fd, "location"),
+        industry: sOrNull(fd, "industry"),
+        ceo: sOrNull(fd, "ceo"),
+        workLocation: sOrNull(fd, "workLocation"),
+        salary: sOrNull(fd, "salary"),
+
+        // numbers
+        year: numOrNull(fd, "year"),
+        employees: numOrNull(fd, "employees"),
+
+        // enums come from hidden inputs synced with Select
+        employmentType: s(fd, "employmentType") as Job["employmentType"],
+        status: s(fd, "status") as Job["status"],
+
+        // dates
+        appliedAt: dateIsoOrNull(fd, "appliedAt"),
+        deadline: dateIsoOrNull(fd, "deadline"),
+
+        // arrays
+        responsibilities: linesToArray(fd, "responsibilities"),
+        requirements: linesToArray(fd, "requirements"),
+        preferred: linesToArray(fd, "preferred"),
+        benefits: linesToArray(fd, "benefits"),
+        tags: csvToArray(fd, "tags"),
+
+        // 체크리스트 UI가 아직 없으므로 기존 값을 유지
+        requirementsChecked: job.requirementsChecked ?? [],
+        preferredChecked: job.preferredChecked ?? [],
+    };
+}
+
+export default function EditJobForm({ job }: Props) {
     const [employmentType, setEmploymentType] = useState<Job["employmentType"]>(
         job.employmentType,
     );
     const [status, setStatus] = useState<Job["status"]>(job.status);
+    const router = useRouter();
+    const [isPending, startTransition] = useTransition();
+
+    function handleSubmit(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        const fd = new FormData(e.currentTarget);
+        const payload = buildUpdatePayload(fd, job);
+        startTransition(async () => {
+            await updateJob(job.id, payload);
+            router.push(`/jobs/${job.id}`);
+            router.refresh();
+        });
+    }
 
     return (
-        <form action={onSubmit} className='flex flex-col gap-4 mb-16'>
+        <form onSubmit={handleSubmit} className='flex flex-col gap-4 mb-16'>
             <input type='hidden' name='jobId' value={job.id} />
 
             <Label className='flex items-center'>
@@ -40,6 +134,15 @@ export default function EditJobForm({ job, onSubmit }: Props) {
                 />
             </Label>
 
+            <Label className='flex items-start'>
+                <span className='min-w-25 pt-2'>회사 소개</span>
+                <Textarea
+                    name='companyIntro'
+                    className='max-w-3xl'
+                    defaultValue={job.companyIntro ?? ""}
+                />
+            </Label>
+
             <Label className='flex items-center'>
                 <span className='min-w-25'>공고 링크</span>
                 <Input
@@ -48,13 +151,22 @@ export default function EditJobForm({ job, onSubmit }: Props) {
                     defaultValue={job.jobUrl ?? ""}
                 />
             </Label>
-
-            <Label className='flex items-start'>
-                <span className='min-w-25 pt-2'>회사 소개</span>
-                <Textarea
-                    name='companyIntro'
+            <Label className='flex items-center'>
+                <span className='min-w-25'>지원일</span>
+                <Input
+                    type='date'
+                    name='appliedAt'
                     className='max-w-3xl'
-                    defaultValue={job.companyIntro ?? ""}
+                    defaultValue={(job.appliedAt ?? "").slice(0, 10)}
+                />
+            </Label>
+            <Label className='flex items-center'>
+                <span className='min-w-25'>마감일</span>
+                <Input
+                    type='date'
+                    name='deadline'
+                    className='max-w-3xl'
+                    defaultValue={(job.deadline ?? "").slice(0, 10)}
                 />
             </Label>
 
@@ -212,7 +324,11 @@ export default function EditJobForm({ job, onSubmit }: Props) {
                 />
             </Label>
 
-            <Button type='submit' className='mt-4 cursor-pointer'>
+            <Button
+                type='submit'
+                className='mt-4 cursor-pointer'
+                disabled={isPending}
+            >
                 <Save />
                 저장하기
             </Button>

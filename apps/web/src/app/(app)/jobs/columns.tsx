@@ -13,7 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowUpDown } from "lucide-react";
 import Link from "next/link";
 
-import type { Job } from "@/lib/jobs";
+import type { Job } from "@/lib/jobsType";
 import type { ColumnDef } from "@tanstack/react-table";
 
 export const columns: ColumnDef<Job>[] = [
@@ -77,36 +77,50 @@ export const columns: ColumnDef<Job>[] = [
     {
         accessorKey: "employmentType",
         header: "근무형태",
-        cell: ({ row }) => (
-            <div className='text-center'>{row.getValue("employmentType")}</div>
-        ),
+        cell: ({ row }) => {
+            const value = row.getValue("employmentType") as string | undefined;
+
+            const EMPLOYMENT_TYPE_LABEL: Record<string, string> = {
+                FULL_TIME: "정규직",
+                CONTRACT: "계약직",
+                INTERN: "인턴",
+                PART_TIME: "파트타임",
+            };
+
+            return (
+                <div className='text-center'>
+                    {value ? (EMPLOYMENT_TYPE_LABEL[value] ?? value) : "-"}
+                </div>
+            );
+        },
     },
     {
         accessorKey: "salary",
         header: () => <div className='text-center'>급여</div>,
         cell: ({ row }) => {
-                        const raw = row.getValue("salary") as string | null | undefined;
+            const raw = row.original.salary;
 
-            if (!raw) {
-                return (
-                    <div className='text-right font-medium'>-</div>
-                );
+            if (raw === null || raw === undefined || raw === "") {
+                return <div className='text-right font-medium'>-</div>;
             }
 
-            const amount = Number(raw);
+            const value = typeof raw === "number" ? String(raw) : String(raw);
+            const amount = Number(value.replace(/,/g, ""));
 
-            if (Number.isNaN(amount)) {
+            // 숫자로 변환 가능하면 통화 포맷 적용
+            if (!Number.isNaN(amount)) {
+                const formatted = new Intl.NumberFormat("ko-KR", {
+                    style: "currency",
+                    currency: "KRW",
+                }).format(amount);
+
                 return (
-                    <div className='text-right font-medium'>{raw}</div>
+                    <div className='text-right font-medium'>{formatted}</div>
                 );
             }
-
-            const formatted = new Intl.NumberFormat("ko-KR", {
-                style: "currency",
-                currency: "KRW",
-            }).format(amount);
-
-            return <div className='text-right font-medium'>{formatted}</div>;
+            const fallback =
+                typeof raw === "object" ? JSON.stringify(raw) : String(raw);
+            return <div className='text-right font-medium'>{fallback}</div>;
         },
     },
     {
@@ -124,9 +138,22 @@ export const columns: ColumnDef<Job>[] = [
                 </Button>
             );
         },
-        cell: ({ row }) => (
-            <div className='text-center'>{row.getValue("deadline")}</div>
-        ),
+        cell: ({ row }) => {
+            const value = row.getValue("deadline") as string | null | undefined;
+
+            if (!value) {
+                return <div className='text-center'>-</div>;
+            }
+
+            const d = new Date(value);
+            if (Number.isNaN(d.getTime())) {
+                return <div className='text-center'>-</div>;
+            }
+
+            const formatted = d.toISOString().slice(0, 10);
+
+            return <div className='text-center'>{formatted}</div>;
+        },
     },
     {
         accessorKey: "status",
@@ -140,8 +167,8 @@ export const columns: ColumnDef<Job>[] = [
                         row.getValue("status") === "최종 합격"
                             ? "bg-red-500"
                             : row.getValue("status") === "불합격"
-                                ? "bg-gray-400"
-                                : "bg-blue-500"
+                              ? "bg-gray-400"
+                              : "bg-blue-500"
                     }
                     `}
                 >

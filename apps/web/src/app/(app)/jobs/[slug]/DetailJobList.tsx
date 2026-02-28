@@ -56,11 +56,18 @@ export default function DetailJobList({
         INTERN: "인턴",
         PART_TIME: "파트타임",
     };
+
     const formatRowValue = (label: string, value: unknown) => {
         if (label === "근무형태" && typeof value === "string") {
             return EMPLOYMENT_TYPE_LABEL[value as EmploymentType] ?? value;
         }
         return String(value ?? "-");
+    };
+
+    const formatDate = (value: unknown) => {
+        if (!value) return "-";
+        const d = new Date(String(value));
+        return Number.isNaN(d.getTime()) ? "-" : d.toISOString().slice(0, 10);
     };
 
     return (
@@ -128,7 +135,7 @@ export default function DetailJobList({
                     {dateRows.map(({ label, value }) => (
                         <TableRow key={label}>
                             <TableCell className='font-bold'>{label}</TableCell>
-                            <TableCell>{String(value ?? "-")}</TableCell>
+                            <TableCell>{formatDate(value)}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

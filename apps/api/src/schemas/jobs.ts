@@ -28,8 +28,8 @@ const createBody = z.object({
     requirementsChecked: z.array(z.string()).default([]),
     preferredChecked: z.array(z.string()).default([]),
 
-    appliedAt: z.coerce.date().optional(),
-    deadline: z.coerce.date().optional(),
+    appliedAt: z.coerce.date().nullable().optional(),
+    deadline: z.coerce.date().nullable().optional(),
 });
 
 const updateBody = createBody

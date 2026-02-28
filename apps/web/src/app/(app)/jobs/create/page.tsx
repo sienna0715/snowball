@@ -40,6 +40,15 @@ export default function CreateJobPage() {
                     <span className='min-w-25'>공고 링크</span>
                     <Input name='jobUrl' className='max-w-3xl' />
                 </Label>
+                <Label htmlFor='appliedAt' className='flex items-center'>
+                    <span className='min-w-25'>지원일</span>
+                    <Input type='date' name='appliedAt' className='max-w-3xl' />
+                </Label>
+                <Label htmlFor='deadline' className='flex items-center'>
+                    <span className='min-w-25'>마감일</span>
+                    <Input type='date' name='deadline' className='max-w-3xl' />
+                </Label>
+
                 <Label htmlFor='industry' className='flex items-center'>
                     <span className='min-w-25'>업종</span>
                     <Input name='industry' className='max-w-3xl' />

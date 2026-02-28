@@ -1,11 +1,10 @@
 import { redirect, notFound } from "next/navigation";
 import { getCookieHeader } from "@/lib/cookies";
 import { getJob } from "@/lib/jobs";
-import { updateJobAction } from "../../actions";
 import EditJobForm from "./EditJobForm";
 
 type JobProps = {
-    params: Promise<{ slug: string }>;
+    params: { slug: string };
 };
 
 export const dynamic = "force-dynamic";
@@ -16,10 +15,13 @@ function parseJobId(slug: string) {
     return n;
 }
 
+function toClientJob<T>(data: T): T {
+    return JSON.parse(JSON.stringify(data)) as T;
+}
+
 export default async function EditJobPage({ params }: JobProps) {
     const { slug } = await params;
     const jobId = parseJobId(slug);
-    
     const cookieHeader = await getCookieHeader();
 
     let job: Awaited<ReturnType<typeof getJob>> | null = null;
@@ -31,7 +33,7 @@ export default async function EditJobPage({ params }: JobProps) {
 
     if (!job) return notFound();
 
-    return (
-        <EditJobForm job={job} onSubmit={updateJobAction.bind(null, job.id)} />
-    );
+    const jobForClient = toClientJob(job);
+
+    return <EditJobForm job={jobForClient} />;
 }

@@ -39,6 +39,15 @@ function mergeHeaders(a?: Record<string, string>, b?: Record<string, string>) {
     return { ...(a ?? {}), ...(b ?? {}) };
 }
 
+function safeParseApiResponse<T>(text: string): ApiResponse<T> | null {
+    if (!text) return null;
+    try {
+        return JSON.parse(text) as ApiResponse<T>;
+    } catch {
+        return null;
+    }
+}
+
 export async function apiFetch<T>(
     path: string,
     options: ApiFetchOptions = {},
@@ -50,35 +59,46 @@ export async function apiFetch<T>(
     const url = isAbsolute
         ? path
         : typeof window === "undefined"
-            ? new URL(path, base).toString()
-            : path;
+          ? new URL(path, base).toString()
+          : path;
 
-    const res = await fetch(url, {
-        ...init,
-        credentials: "include",
-        headers: mergeHeaders(headers, cookie ? { cookie } : undefined),
-        cache: "no-store",
-    });
+    let res: Response;
+    try {
+        res = await fetch(url, {
+            ...init,
+            credentials: "include",
+            headers: mergeHeaders(headers, cookie ? { cookie } : undefined),
+            cache: "no-store",
+        });
+    } catch (err) {
+        const message = err instanceof Error ? err.message : "Network error";
+        throw new ApiError(message, 0);
+    }
 
-    // 서버 응답 {ok, data} 형태
-    const json = (await res.json().catch(() => null)) as ApiResponse<T> | null;
-	
+    // 204 No Content (e.g. DELETE success)
+    if (res.status === 204) {
+        return undefined as T;
+    }
+
+    const text = await res.text();
+    // 서버 응답은 원칙적으로 { ok, data } 형태지만,
+    // 런타임/프록시 에러로 일반 텍스트가 올 수도 있음
+    const json = safeParseApiResponse<T>(text);
+
     if (!res.ok) {
         const msg =
-            (json &&
-                "ok" in json &&
-                json.ok === false &&
-                json.error?.message) ||
-            `Request failed (${res.status})`;
-        const details =
-            json && "ok" in json && json.ok === false
-                ? json.error?.details
-                : undefined;
+            (json?.ok === false && json.error?.message) ||
+            (text
+                ? text.trim().slice(0, 200)
+                : `Request failed (${res.status})`);
+        const details = json?.ok === false ? json.error?.details : undefined;
         throw new ApiError(msg, res.status, details);
     }
 
     if (!json) {
-        throw new ApiError("Invalid server response", res.status);
+        // 일부 성공 응답은 바디가 비어있거나(text) JSON이 아닐 수 있음
+        // (예: DELETE 성공, 프록시가 빈 바디를 반환)
+        return undefined as T;
     }
 
     if (json.ok === false) {

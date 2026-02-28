@@ -31,6 +31,23 @@ function numOrNull(fd: FormData, key: string): number | null {
     return Number.isFinite(n) ? n : null;
 }
 
+function dateIsoOrNull(fd: FormData, key: string): string | null {
+    const v = String(fd.get(key) ?? "").trim();
+    if (!v) return null;
+
+    // `type="date"` typically yields `YYYY-MM-DD`
+    const d = new Date(v);
+    return Number.isNaN(d.getTime()) ? null : d.toISOString();
+}
+
+function dateIsoOrUndef(fd: FormData, key: string): string | undefined {
+    const v = String(fd.get(key) ?? "").trim();
+    if (!v) return undefined;
+
+    const d = new Date(v);
+    return Number.isNaN(d.getTime()) ? undefined : d.toISOString();
+}
+
 function jobEmploymentType(
     fd: FormData,
     key = "employmentType",
@@ -95,8 +112,8 @@ export async function createJobAction(formData: FormData) {
         preferredChecked: [],
 
         other: null,
-        appliedAt: null,
-        deadline: null,
+        appliedAt: dateIsoOrNull(formData, "appliedAt"),
+        deadline: dateIsoOrNull(formData, "deadline"),
 
         status: jobStatus(formData),
     };
@@ -127,6 +144,8 @@ export async function updateJobAction(jobId: number, formData: FormData) {
         employmentType: jobEmploymentType(formData),
         workLocation: strOrNull(formData, "workLocation") ?? undefined,
         salary: strOrNull(formData, "salary") ?? undefined,
+        appliedAt: dateIsoOrUndef(formData, "appliedAt"),
+        deadline: dateIsoOrUndef(formData, "deadline"),
 
         // ⚠️ select가 항상 값이 넘어오는 UI면 status가 매번 덮어써질 수 있음
         //   지금은 "항상 status도 업데이트한다" 정책으로 단순화
