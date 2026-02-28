@@ -31,6 +31,11 @@ export default async function JobDetailPage({ params }: JobProps) {
 
     if (!job) return notFound();
 
+    const dateRows: Array<{ label: string; value: unknown }> = [
+        { label: "지원일", value: job.appliedAt },
+        { label: "마감일", value: job.deadline },
+    ];
+
     const companyRows: Array<{ label: string; value: unknown }> = [
         { label: "업종", value: job.industry },
         { label: "업력", value: job.year },
@@ -45,5 +50,5 @@ export default async function JobDetailPage({ params }: JobProps) {
         { label: "급여", value: job.salary },
     ];
 
-    return <DetailJobList job={job} companyRows={companyRows} workRows={workRows} />;
+    return <DetailJobList job={job} dateRows={dateRows} companyRows={companyRows} workRows={workRows} />;
 }

@@ -2,8 +2,9 @@ import type { Prisma, JobStatus } from "@prisma/client";
 /** =========================
  * Types
  * ========================= */
+type JobListFields = "responsibilities" | "requirements" | "preferred" | "benefits" | "tags" | "requirementsChecked" | "preferredChecked";
 export type CreateJobData = Omit<Prisma.JobUncheckedCreateInput, "id" | "userId" | "createdAt" | "updatedAt">;
-export type UpdateJobData = Prisma.JobUncheckedUpdateInput;
+export type UpdateJobData = Omit<Prisma.JobUncheckedUpdateManyInput, JobListFields> & Partial<Record<JobListFields, string[]>>;
 export type ListJobsQuery = {
     status?: JobStatus;
     limit?: number;
@@ -17,6 +18,8 @@ export declare function createJob(userId: number, data: CreateJobData): Promise<
     createdAt: Date;
     updatedAt: Date;
     companyName: string;
+    employmentType: import("@prisma/client").$Enums.EmploymentType;
+    status: import("@prisma/client").$Enums.JobStatus;
     position: string | null;
     jobUrl: string | null;
     companyIntro: string | null;
@@ -25,13 +28,18 @@ export declare function createJob(userId: number, data: CreateJobData): Promise<
     year: number | null;
     employees: number | null;
     ceo: string | null;
-    employmentType: import("@prisma/client").$Enums.EmploymentType;
     workLocation: string | null;
     salary: string | null;
     other: Prisma.JsonValue;
+    responsibilities: string[];
+    requirements: string[];
+    preferred: string[];
+    benefits: string[];
+    tags: string[];
+    requirementsChecked: string[];
+    preferredChecked: string[];
     appliedAt: Date | null;
     deadline: Date | null;
-    status: import("@prisma/client").$Enums.JobStatus;
 }>;
 /** =========================
  * List (Cursor Pagination)
@@ -44,12 +52,19 @@ export declare function getAll(userId: number, query: ListJobsQuery): Promise<{
         createdAt: Date;
         updatedAt: Date;
         companyName: string;
+        employmentType: import("@prisma/client").$Enums.EmploymentType;
+        status: import("@prisma/client").$Enums.JobStatus;
         position: string | null;
         jobUrl: string | null;
-        employmentType: import("@prisma/client").$Enums.EmploymentType;
+        responsibilities: string[];
+        requirements: string[];
+        preferred: string[];
+        benefits: string[];
+        tags: string[];
+        requirementsChecked: string[];
+        preferredChecked: string[];
         appliedAt: Date | null;
         deadline: Date | null;
-        status: import("@prisma/client").$Enums.JobStatus;
     }[];
     nextCursor: number | null;
 }>;
@@ -61,6 +76,8 @@ export declare function getById(jobId: number, userId: number): Promise<{
     createdAt: Date;
     updatedAt: Date;
     companyName: string;
+    employmentType: import("@prisma/client").$Enums.EmploymentType;
+    status: import("@prisma/client").$Enums.JobStatus;
     position: string | null;
     jobUrl: string | null;
     companyIntro: string | null;
@@ -69,13 +86,18 @@ export declare function getById(jobId: number, userId: number): Promise<{
     year: number | null;
     employees: number | null;
     ceo: string | null;
-    employmentType: import("@prisma/client").$Enums.EmploymentType;
     workLocation: string | null;
     salary: string | null;
     other: Prisma.JsonValue;
+    responsibilities: string[];
+    requirements: string[];
+    preferred: string[];
+    benefits: string[];
+    tags: string[];
+    requirementsChecked: string[];
+    preferredChecked: string[];
     appliedAt: Date | null;
     deadline: Date | null;
-    status: import("@prisma/client").$Enums.JobStatus;
 } | null>;
 /** =========================
  * Update (쿼리 1번으로)
@@ -87,16 +109,24 @@ export declare function updateJob(jobId: number, userId: number, data: UpdateJob
     createdAt: Date;
     updatedAt: Date;
     companyName: string;
+    employmentType: import("@prisma/client").$Enums.EmploymentType;
+    status: import("@prisma/client").$Enums.JobStatus;
     position: string | null;
     jobUrl: string | null;
-    employmentType: import("@prisma/client").$Enums.EmploymentType;
+    responsibilities: string[];
+    requirements: string[];
+    preferred: string[];
+    benefits: string[];
+    tags: string[];
+    requirementsChecked: string[];
+    preferredChecked: string[];
     appliedAt: Date | null;
     deadline: Date | null;
-    status: import("@prisma/client").$Enums.JobStatus;
 } | null>;
 /** =========================
  * Delete (쿼리 1번으로)
  * - deleteMany도 count로 성공/실패 판단 가능
  * ========================= */
 export declare function deleteJob(jobId: number, userId: number): Promise<boolean>;
+export {};
 //# sourceMappingURL=jobs.d.ts.map

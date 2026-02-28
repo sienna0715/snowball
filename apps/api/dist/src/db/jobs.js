@@ -8,6 +8,13 @@ const jobListSelect = {
     position: true,
     jobUrl: true,
     employmentType: true,
+    responsibilities: true,
+    requirements: true,
+    preferred: true,
+    benefits: true,
+    tags: true,
+    requirementsChecked: true,
+    preferredChecked: true,
     status: true,
     appliedAt: true,
     deadline: true,
@@ -29,6 +36,13 @@ const jobDetailSelect = {
     workLocation: true,
     salary: true,
     other: true,
+    responsibilities: true,
+    requirements: true,
+    preferred: true,
+    benefits: true,
+    tags: true,
+    requirementsChecked: true,
+    preferredChecked: true,
     appliedAt: true,
     deadline: true,
     status: true,
@@ -92,9 +106,31 @@ export async function getById(jobId, userId) {
  * - 결과 count로 성공/실패 판단
  * ========================= */
 export async function updateJob(jobId, userId, data) {
+    const prismaData = {
+        ...data,
+        ...(data.responsibilities !== undefined
+            ? { responsibilities: { set: data.responsibilities } }
+            : {}),
+        ...(data.requirements !== undefined
+            ? { requirements: { set: data.requirements } }
+            : {}),
+        ...(data.preferred !== undefined
+            ? { preferred: { set: data.preferred } }
+            : {}),
+        ...(data.benefits !== undefined
+            ? { benefits: { set: data.benefits } }
+            : {}),
+        ...(data.tags !== undefined ? { tags: { set: data.tags } } : {}),
+        ...(data.requirementsChecked !== undefined
+            ? { requirementsChecked: { set: data.requirementsChecked } }
+            : {}),
+        ...(data.preferredChecked !== undefined
+            ? { preferredChecked: { set: data.preferredChecked } }
+            : {}),
+    };
     const result = await prisma.job.updateMany({
         where: { id: jobId, userId },
-        data,
+        data: prismaData,
     });
     if (result.count === 0)
         return null;

@@ -65,6 +65,14 @@ model Job {
   salary         String?
   other          Json?
 
+  responsibilities String[] @default([])
+  requirements     String[] @default([])
+  preferred        String[] @default([])
+  benefits         String[] @default([])
+  tags             String[] @default([])
+  requirementsChecked String[] @default([])
+  preferredChecked    String[] @default([])
+
   appliedAt DateTime?
   deadline  DateTime?
   status    JobStatus

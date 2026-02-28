@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
-import type { Job } from "@/lib/jobs";
+import type { Job } from "@/lib/jobsType";
 
 type Props = {
     job: Job;
@@ -160,6 +160,56 @@ export default function EditJobForm({ job, onSubmit }: Props) {
                         <SelectItem value='REJECTED'>불합격</SelectItem>
                     </SelectContent>
                 </Select>
+            </Label>
+
+            <Label className='flex items-start'>
+                <span className='min-w-25 pt-2'>주요업무</span>
+                <Textarea
+                    name='responsibilities'
+                    className='max-w-3xl'
+                    defaultValue={(job.responsibilities ?? []).join("\n")}
+                    placeholder='한 줄에 하나씩 입력'
+                />
+            </Label>
+
+            <Label className='flex items-start'>
+                <span className='min-w-25 pt-2'>자격요건</span>
+                <Textarea
+                    name='requirements'
+                    className='max-w-3xl'
+                    defaultValue={(job.requirements ?? []).join("\n")}
+                    placeholder='한 줄에 하나씩 입력'
+                />
+            </Label>
+
+            <Label className='flex items-start'>
+                <span className='min-w-25 pt-2'>우대사항</span>
+                <Textarea
+                    name='preferred'
+                    className='max-w-3xl'
+                    defaultValue={(job.preferred ?? []).join("\n")}
+                    placeholder='한 줄에 하나씩 입력'
+                />
+            </Label>
+
+            <Label className='flex items-start'>
+                <span className='min-w-25 pt-2'>문화 / 복리후생</span>
+                <Textarea
+                    name='benefits'
+                    className='max-w-3xl'
+                    defaultValue={(job.benefits ?? []).join("\n")}
+                    placeholder='한 줄에 하나씩 입력'
+                />
+            </Label>
+
+            <Label className='flex items-center'>
+                <span className='min-w-25'>태그</span>
+                <Input
+                    name='tags'
+                    className='max-w-3xl'
+                    defaultValue={(job.tags ?? []).join(", ")}
+                    placeholder='쉼표(,)로 구분'
+                />
             </Label>
 
             <Button type='submit' className='mt-4 cursor-pointer'>

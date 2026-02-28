@@ -1,11 +1,12 @@
 import express from "express";
 import { authMiddleware } from "../middlewares/auth.js";
+import { jobsSchemas } from "../schemas/jobs.js";
+import { jobsController } from "../controllers/jobs.js";
 import {
     validateBody,
     validateParams,
     validateQuery,
 } from "../middlewares/validate.js";
-import { jobsController, jobsSchemas } from "../controllers/jobs.js";
 
 const router = express.Router();
 

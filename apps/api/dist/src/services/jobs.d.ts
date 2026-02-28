@@ -1,5 +1,5 @@
 import type { ListJobsQuery } from "../db/jobs.js";
-import type { CreateJobInput, UpdateJobInput } from "../controllers/jobs.js";
+import type { CreateJobInput, UpdateJobInput } from "../schemas/jobs.js";
 import { Prisma } from "@prisma/client";
 export declare const jobsService: {
     create(userId: number, input: CreateJobInput): Promise<{
@@ -7,6 +7,8 @@ export declare const jobsService: {
         createdAt: Date;
         updatedAt: Date;
         companyName: string;
+        employmentType: import("@prisma/client").$Enums.EmploymentType;
+        status: import("@prisma/client").$Enums.JobStatus;
         position: string | null;
         jobUrl: string | null;
         companyIntro: string | null;
@@ -15,13 +17,18 @@ export declare const jobsService: {
         year: number | null;
         employees: number | null;
         ceo: string | null;
-        employmentType: import("@prisma/client").$Enums.EmploymentType;
         workLocation: string | null;
         salary: string | null;
         other: Prisma.JsonValue;
+        responsibilities: string[];
+        requirements: string[];
+        preferred: string[];
+        benefits: string[];
+        tags: string[];
+        requirementsChecked: string[];
+        preferredChecked: string[];
         appliedAt: Date | null;
         deadline: Date | null;
-        status: import("@prisma/client").$Enums.JobStatus;
     }>;
     list(userId: number, query: ListJobsQuery): Promise<{
         items: {
@@ -29,12 +36,19 @@ export declare const jobsService: {
             createdAt: Date;
             updatedAt: Date;
             companyName: string;
+            employmentType: import("@prisma/client").$Enums.EmploymentType;
+            status: import("@prisma/client").$Enums.JobStatus;
             position: string | null;
             jobUrl: string | null;
-            employmentType: import("@prisma/client").$Enums.EmploymentType;
+            responsibilities: string[];
+            requirements: string[];
+            preferred: string[];
+            benefits: string[];
+            tags: string[];
+            requirementsChecked: string[];
+            preferredChecked: string[];
             appliedAt: Date | null;
             deadline: Date | null;
-            status: import("@prisma/client").$Enums.JobStatus;
         }[];
         nextCursor: number | null;
     }>;
@@ -43,6 +57,8 @@ export declare const jobsService: {
         createdAt: Date;
         updatedAt: Date;
         companyName: string;
+        employmentType: import("@prisma/client").$Enums.EmploymentType;
+        status: import("@prisma/client").$Enums.JobStatus;
         position: string | null;
         jobUrl: string | null;
         companyIntro: string | null;
@@ -51,25 +67,37 @@ export declare const jobsService: {
         year: number | null;
         employees: number | null;
         ceo: string | null;
-        employmentType: import("@prisma/client").$Enums.EmploymentType;
         workLocation: string | null;
         salary: string | null;
         other: Prisma.JsonValue;
+        responsibilities: string[];
+        requirements: string[];
+        preferred: string[];
+        benefits: string[];
+        tags: string[];
+        requirementsChecked: string[];
+        preferredChecked: string[];
         appliedAt: Date | null;
         deadline: Date | null;
-        status: import("@prisma/client").$Enums.JobStatus;
     }>;
     update(userId: number, jobId: number, input: UpdateJobInput): Promise<{
         id: number;
         createdAt: Date;
         updatedAt: Date;
         companyName: string;
+        employmentType: import("@prisma/client").$Enums.EmploymentType;
+        status: import("@prisma/client").$Enums.JobStatus;
         position: string | null;
         jobUrl: string | null;
-        employmentType: import("@prisma/client").$Enums.EmploymentType;
+        responsibilities: string[];
+        requirements: string[];
+        preferred: string[];
+        benefits: string[];
+        tags: string[];
+        requirementsChecked: string[];
+        preferredChecked: string[];
         appliedAt: Date | null;
         deadline: Date | null;
-        status: import("@prisma/client").$Enums.JobStatus;
     }>;
     remove(userId: number, jobId: number): Promise<void>;
 };

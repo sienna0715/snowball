@@ -31,15 +31,38 @@ import {
     MenubarShortcut,
     MenubarTrigger,
 } from "@/components/ui/menubar";
-import type { Job } from "@/lib/jobs";
+import type { EmploymentType, Job } from "@/lib/jobsType";
 
 type Props = {
     job: Job;
+    dateRows: Array<{ label: string; value: unknown }>;
     companyRows: Array<{ label: string; value: unknown }>;
     workRows: Array<{ label: string; value: unknown }>;
 };
 
-export default function DetailJobList({ job, companyRows, workRows }: Props) {
+export default function DetailJobList({
+    job,
+    dateRows,
+    companyRows,
+    workRows,
+}: Props) {
+    const uniq = (arr: string[] = []) =>
+        Array.from(new Set(arr)).filter(Boolean);
+    const isChecked = (checked: string[] = [], item: string) =>
+        checked.includes(item);
+    const EMPLOYMENT_TYPE_LABEL: Record<EmploymentType, string> = {
+        FULL_TIME: "정규직",
+        CONTRACT: "계약직",
+        INTERN: "인턴",
+        PART_TIME: "파트타임",
+    };
+    const formatRowValue = (label: string, value: unknown) => {
+        if (label === "근무형태" && typeof value === "string") {
+            return EMPLOYMENT_TYPE_LABEL[value as EmploymentType] ?? value;
+        }
+        return String(value ?? "-");
+    };
+
     return (
         <div className='py-10 mb-25'>
             <Menubar className='w-max'>
@@ -78,6 +101,10 @@ export default function DetailJobList({ job, companyRows, workRows }: Props) {
             <div className='w-full flex flex-col gap-4 mb-4 mt-8'>
                 <h1 className='text-4xl font-bold pb-4'>{job.companyName}</h1>
 
+                {job.companyIntro ? (
+                    <p className='w-full max-w-5xl'>{job.companyIntro}</p>
+                ) : null}
+
                 {job.jobUrl ? (
                     <Link
                         href={job.jobUrl}
@@ -88,11 +115,24 @@ export default function DetailJobList({ job, companyRows, workRows }: Props) {
                         공고 링크
                     </Link>
                 ) : null}
-
-                {job.companyIntro ? (
-                    <p className='w-full max-w-5xl'>{job.companyIntro}</p>
-                ) : null}
             </div>
+
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead className='w-[100px]'></TableHead>
+                        <TableHead></TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {dateRows.map(({ label, value }) => (
+                        <TableRow key={label}>
+                            <TableCell className='font-bold'>{label}</TableCell>
+                            <TableCell>{String(value ?? "-")}</TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
 
             <Table>
                 <TableHeader>
@@ -122,11 +162,13 @@ export default function DetailJobList({ job, companyRows, workRows }: Props) {
                     {workRows.map(({ label, value }) => (
                         <TableRow key={label}>
                             <TableCell className='font-bold'>{label}</TableCell>
-                            <TableCell>{String(value ?? "-")}</TableCell>
+                            <TableCell>
+                                {formatRowValue(label, value)}
+                            </TableCell>
                         </TableRow>
                     ))}
 
-                    <TableRow>
+                    {/* <TableRow>
                         <TableCell className='font-bold'>참조</TableCell>
                         <TableCell>
                             {job.other ? (
@@ -137,7 +179,7 @@ export default function DetailJobList({ job, companyRows, workRows }: Props) {
                                 "-"
                             )}
                         </TableCell>
-                    </TableRow>
+                    </TableRow> */}
                 </TableBody>
             </Table>
 
@@ -150,136 +192,102 @@ export default function DetailJobList({ job, companyRows, workRows }: Props) {
             </div>
 
             <Accordion type='multiple'>
-                <AccordionItem value='item-2'>
-                    <AccordionTrigger className='font-bold text-base'>
-                        주요업무
-                    </AccordionTrigger>
-                    <AccordionContent className='flex items-center'>
-                        <li className='list-item'>
-                            클라우드 기반 SaaS 웹 서비스의 프론트엔드 개발
-                        </li>
-                    </AccordionContent>
-                    <AccordionContent>
-                        <li className='list-item'>
-                            사용자 친화적인 UI/UX 구현
-                        </li>
-                    </AccordionContent>
-                    <AccordionContent>
-                        <li className='list-item'>
-                            반응형 웹 및 다양한 디바이스에 최적화된 화면 개발
-                        </li>
-                    </AccordionContent>
-                    <AccordionContent>
-                        <li className='list-item'>
-                            인터랙티브 차트 및 시각화 기능 개발 (차트/그래프
-                            라이브러리 활용)
-                        </li>
-                    </AccordionContent>
-                </AccordionItem>
+                {uniq(job.responsibilities).length > 0 && (
+                    <AccordionItem value='responsibilities'>
+                        <AccordionTrigger className='font-bold text-base'>
+                            주요업무
+                        </AccordionTrigger>
+                        <AccordionContent>
+                            <ul className='list-disc pl-5 space-y-2'>
+                                {uniq(job.responsibilities).map((item) => (
+                                    <li key={item}>{item}</li>
+                                ))}
+                            </ul>
+                        </AccordionContent>
+                    </AccordionItem>
+                )}
 
-                <AccordionItem value='item-3'>
-                    <AccordionTrigger className='font-bold text-base'>
-                        자격요건
-                    </AccordionTrigger>
-                    <AccordionContent className='flex items-center'>
-                        <Checkbox />
-                        <p className='pl-2'>
-                            React 및 JavaScript에 대한 기본 이해
-                        </p>
-                    </AccordionContent>
-                    <AccordionContent className='flex items-center'>
-                        <Checkbox />
-                        <p className='pl-2'>REST API 사용 경험 또는 이해</p>
-                    </AccordionContent>
-                    <AccordionContent className='flex items-center'>
-                        <Checkbox />
-                        <p className='pl-2'>Git 등 형상관리 툴 사용 가능</p>
-                    </AccordionContent>
-                    <AccordionContent className='flex items-center'>
-                        <Checkbox />
-                        <p className='pl-2'>
-                            문제를 스스로 파악하고 해결하려는 태도
-                        </p>
-                    </AccordionContent>
-                    <AccordionContent className='flex items-center'>
-                        <Checkbox />
-                        <p className='pl-2'>협업 및 커뮤니케이션 능력</p>
-                    </AccordionContent>
-                </AccordionItem>
+                {uniq(job.requirements).length > 0 && (
+                    <AccordionItem value='requirements'>
+                        <AccordionTrigger className='font-bold text-base'>
+                            자격요건
+                        </AccordionTrigger>
+                        <AccordionContent>
+                            <ul className='space-y-2'>
+                                {uniq(job.requirements).map((item) => (
+                                    <li
+                                        key={item}
+                                        className='flex items-center gap-2'
+                                    >
+                                        <Checkbox
+                                            checked={isChecked(
+                                                job.requirementsChecked,
+                                                item,
+                                            )}
+                                            disabled
+                                        />
+                                        <p>{item}</p>
+                                    </li>
+                                ))}
+                            </ul>
+                        </AccordionContent>
+                    </AccordionItem>
+                )}
 
-                <AccordionItem value='item-4'>
-                    <AccordionTrigger className='font-bold text-base'>
-                        우대사항
-                    </AccordionTrigger>
-                    <AccordionContent className='flex items-center'>
-                        <Checkbox />
-                        <p className='pl-2'>TypeScript 사용 경험</p>
-                    </AccordionContent>
-                    <AccordionContent className='flex items-center'>
-                        <Checkbox />
-                        <p className='pl-2'>
-                            Next.js, Chart.js, D3.js 등 사용 경험
-                        </p>
-                    </AccordionContent>
-                    <AccordionContent className='flex items-center'>
-                        <Checkbox />
-                        <p className='pl-2'>반응형 웹 개발 경험</p>
-                    </AccordionContent>
-                    <AccordionContent className='flex items-center'>
-                        <Checkbox />
-                        <p className='pl-2'>
-                            팀 프로젝트 또는 개인 프로젝트 경험
-                        </p>
-                    </AccordionContent>
-                    <AccordionContent className='flex items-center'>
-                        <Checkbox />
-                        <p className='pl-2'>
-                            기술 블로그 운영 또는 개발 관련 커뮤니티 활동
-                        </p>
-                    </AccordionContent>
-                    <AccordionContent className='flex items-center'>
-                        <Checkbox />
-                        <p className='pl-2'>
-                            기본적인 백엔드 이해 또는 Node.js 경험
-                        </p>
-                    </AccordionContent>
-                </AccordionItem>
+                {uniq(job.preferred).length > 0 && (
+                    <AccordionItem value='preferred'>
+                        <AccordionTrigger className='font-bold text-base'>
+                            우대사항
+                        </AccordionTrigger>
+                        <AccordionContent>
+                            <ul className='space-y-2'>
+                                {uniq(job.preferred).map((item) => (
+                                    <li
+                                        key={item}
+                                        className='flex items-center gap-2'
+                                    >
+                                        <Checkbox
+                                            checked={isChecked(
+                                                job.preferredChecked,
+                                                item,
+                                            )}
+                                            disabled
+                                        />
+                                        <p>{item}</p>
+                                    </li>
+                                ))}
+                            </ul>
+                        </AccordionContent>
+                    </AccordionItem>
+                )}
 
-                <AccordionItem value='item-1'>
-                    <AccordionTrigger className='font-bold text-base'>
-                        문화 / 복리후생
-                    </AccordionTrigger>
-                    <AccordionContent>
-                        <li className='list-item'>코드 리뷰 진행</li>
-                    </AccordionContent>
-                    <AccordionContent>
-                        <li className='list-item'>유연한 탄력근무제</li>
-                    </AccordionContent>
-                    <AccordionContent>
-                        <li className='list-item'>
-                            자기계발 지원 - 도서 구입, 자격증 취득, 교육 수강,
-                            세미나/컨퍼런스 참여 기회 제공
-                        </li>
-                    </AccordionContent>
-                </AccordionItem>
+                {uniq(job.benefits).length > 0 && (
+                    <AccordionItem value='benefits'>
+                        <AccordionTrigger className='font-bold text-base'>
+                            문화 / 복리후생
+                        </AccordionTrigger>
+                        <AccordionContent>
+                            <ul className='list-disc pl-5 space-y-2'>
+                                {uniq(job.benefits).map((item) => (
+                                    <li key={item}>{item}</li>
+                                ))}
+                            </ul>
+                        </AccordionContent>
+                    </AccordionItem>
+                )}
             </Accordion>
 
             <div className='mt-16'>
                 <span className='font-bold text-base'>키워드</span>
-                <div className='flex gap-1.5 pt-4'>
-                    <Badge asChild className='bg-secondary text-black'>
-                        <Link href='/'>HTML</Link>
-                    </Badge>
-                    <Badge asChild className='bg-secondary text-black'>
-                        <Link href='/'>TypeScript</Link>
-                    </Badge>
-                    <Badge asChild className='bg-secondary text-black'>
-                        <Link href='/'>React</Link>
-                    </Badge>
-                    <Badge asChild className='bg-secondary text-black'>
-                        <Link href='/'>Next.js</Link>
-                    </Badge>
-                </div>
+                {uniq(job.tags).length > 0 && (
+                    <div className='flex gap-1.5 pt-4'>
+                        {uniq(job.tags).map((tag) => (
+                            <Badge key={tag} variant='secondary'>
+                                {tag}
+                            </Badge>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );

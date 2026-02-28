@@ -1,7 +1,6 @@
 // Runtime
-import type { Request, Response, CookieOptions } from "express";
+import type { Request, Response } from "express";
 import crypto from "crypto";
-import { env } from "../config/env.js";
 
 // Infrastructure
 import { prisma } from "../db/prisma.js";
@@ -11,15 +10,8 @@ import { signSession } from "./session.js";
 import { HttpError } from "../utils/error.js";
 
 // Auth
+import { cookieOpts } from "../config/cookie.js";
 import { getProvider, type OAuthProfile } from "../auth/providers.js";
-
-const isProd = env.NODE_ENV === "production";
-const cookieOpts: CookieOptions = {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: isProd ? "none" : "lax",
-    path: "/",
-};
 
 function newState() {
     return crypto.randomBytes(16).toString("hex");

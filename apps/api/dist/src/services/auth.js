@@ -1,19 +1,12 @@
 import crypto from "crypto";
-import { env } from "../config/env.js";
 // Infrastructure
 import { prisma } from "../db/prisma.js";
 import { signSession } from "./session.js";
 // Errors
 import { HttpError } from "../utils/error.js";
 // Auth
+import { cookieOpts } from "../config/cookie.js";
 import { getProvider } from "../auth/providers.js";
-const isProd = env.NODE_ENV === "production";
-const cookieOpts = {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: isProd ? "none" : "lax",
-    path: "/",
-};
 function newState() {
     return crypto.randomBytes(16).toString("hex");
 }

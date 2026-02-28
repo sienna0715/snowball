@@ -14,7 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
 
-import type { EmploymentType, JobStatus } from "@/lib/jobs";
+import type { EmploymentType, JobStatus } from "@/lib/jobsType";
 import { createJobAction } from "../actions";
 
 export default function CreateJobPage() {
@@ -32,13 +32,13 @@ export default function CreateJobPage() {
                     <span className='min-w-25'>회사명</span>
                     <Input name='companyName' className='max-w-3xl' required />
                 </Label>
-                <Label htmlFor='jobUrl' className='flex items-center'>
-                    <span className='min-w-25'>공고 링크</span>
-                    <Input name='jobUrl' className='max-w-3xl' />
-                </Label>
                 <Label htmlFor='companyIntro' className='flex items-start'>
                     <span className='min-w-25 pt-2'>회사 소개</span>
                     <Textarea name='companyIntro' className='max-w-3xl' />
+                </Label>
+                <Label htmlFor='jobUrl' className='flex items-center'>
+                    <span className='min-w-25'>공고 링크</span>
+                    <Input name='jobUrl' className='max-w-3xl' />
                 </Label>
                 <Label htmlFor='industry' className='flex items-center'>
                     <span className='min-w-25'>업종</span>
@@ -60,7 +60,7 @@ export default function CreateJobPage() {
                     <span className='min-w-25'>대표명</span>
                     <Input name='ceo' className='max-w-3xl' />
                 </Label>
-                
+
                 <Label htmlFor='employmentType' className='flex items-center'>
                     <span className='min-w-25'>근무 형태</span>
                     <input
@@ -117,21 +117,46 @@ export default function CreateJobPage() {
                     <span className='min-w-25'>직무</span>
                     <Input name='position' className='max-w-3xl' required />
                 </Label>
-                <Label htmlFor='email' className='flex items-start'>
+                <Label htmlFor='responsibilities' className='flex items-start'>
                     <span className='min-w-25 pt-2'>주요업무</span>
-                    <Textarea className='max-w-3xl' />
+                    <Textarea
+                        name='responsibilities'
+                        className='max-w-3xl'
+                        placeholder='한 줄에 하나씩 입력'
+                    />
                 </Label>
-                <Label htmlFor='email' className='flex items-start'>
+                <Label htmlFor='requirements' className='flex items-start'>
                     <span className='min-w-25 pt-2'>자격요건</span>
-                    <Textarea className='max-w-3xl' />
+                    <Textarea
+                        name='requirements'
+                        className='max-w-3xl'
+                        placeholder='한 줄에 하나씩 입력'
+                    />
                 </Label>
-                <Label htmlFor='email' className='flex items-start'>
+                <Label htmlFor='preferred' className='flex items-start'>
                     <span className='min-w-25 pt-2'>우대사항</span>
-                    <Textarea className='max-w-3xl' />
+                    <Textarea
+                        name='preferred'
+                        className='max-w-3xl'
+                        placeholder='한 줄에 하나씩 입력'
+                    />
                 </Label>
-                <Label htmlFor='email' className='flex items-start'>
+                <Label htmlFor='benefits' className='flex items-start'>
                     <span className='min-w-25 pt-2'>문화 / 복리후생</span>
-                    <Textarea className='max-w-3xl' />
+                    <Textarea
+                        name='benefits'
+                        className='max-w-3xl'
+                        placeholder='한 줄에 하나씩 입력'
+                    />
+                </Label>
+
+                <Label htmlFor='tags' className='flex items-start'>
+                    <span className='min-w-25 pt-2'>태그</span>
+                    <Input
+                        name='tags'
+                        className='max-w-3xl'
+                        placeholder='쉼표(,)로 구분'
+                    />
                 </Label>
 
                 <Button type='submit' className='mt-4 cursor-pointer'>
