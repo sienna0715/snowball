@@ -109,11 +109,25 @@ export default function CreateJobPage() {
                 </Label>
                 <Label htmlFor='year' className='flex items-center'>
                     <span className='min-w-25'>업력</span>
-                    <Input name='year' className='max-w-3xl' />
+                    <Input
+                        type='number'
+                        inputMode='numeric'
+                        min={0}
+                        name='year'
+                        className='max-w-3xl'
+                        placeholder='숫자만 입력'
+                    />
                 </Label>
                 <Label htmlFor='employees' className='flex items-center'>
                     <span className='min-w-25'>사원수</span>
-                    <Input name='employees' className='max-w-3xl' />
+                    <Input
+                        type='number'
+                        inputMode='numeric'
+                        min={0}
+                        name='employees'
+                        className='max-w-3xl'
+                        placeholder='숫자만 입력'
+                    />
                 </Label>
                 <Label htmlFor='location' className='flex items-center'>
                     <span className='min-w-25'>위치</span>

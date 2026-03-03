@@ -231,18 +231,26 @@ export default function EditJobForm({ job }: Props) {
             <Label className='flex items-center'>
                 <span className='min-w-25'>업력</span>
                 <Input
+                    type='number'
+                    inputMode='numeric'
+                    min={0}
                     name='year'
                     className='max-w-3xl'
                     defaultValue={job.year ?? undefined}
+                    placeholder='숫자만 입력'
                 />
             </Label>
 
             <Label className='flex items-center'>
                 <span className='min-w-25'>사원수</span>
                 <Input
+                    type='number'
+                    inputMode='numeric'
+                    min={0}
                     name='employees'
                     className='max-w-3xl'
                     defaultValue={job.employees ?? undefined}
+                    placeholder='숫자만 입력'
                 />
             </Label>
 

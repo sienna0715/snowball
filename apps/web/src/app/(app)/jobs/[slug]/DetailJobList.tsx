@@ -109,7 +109,9 @@ export default function DetailJobList({
                 <h1 className='text-4xl font-bold pb-4'>{job.companyName}</h1>
 
                 {job.companyIntro ? (
-                    <p className='w-full max-w-5x whitespace-pre-wrap break-words'>{job.companyIntro}</p>
+                    <p className='w-full max-w-5x whitespace-pre-wrap break-words'>
+                        {job.companyIntro}
+                    </p>
                 ) : null}
 
                 {job.jobUrl ? (
@@ -155,7 +157,9 @@ export default function DetailJobList({
                             <TableCell>
                                 {label === "업력" && value
                                     ? `${String(value)}년차`
-                                    : String(value ?? "-")}
+                                    : label === "사원수" && value
+                                        ? `${String(value)}명`
+                                        : String(value ?? "-")}
                             </TableCell>
                         </TableRow>
                     ))}
