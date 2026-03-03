@@ -74,7 +74,9 @@ export const columns: ColumnDef<Job>[] = [
         accessorKey: "workLocation",
         header: "근무지",
         cell: ({ row }) => (
-            <div className='text-center'>{row.getValue("workLocation") || "-"}</div>
+            <div className='text-center'>
+                {row.getValue("workLocation") || "-"}
+            </div>
         ),
     },
     {
@@ -161,24 +163,40 @@ export const columns: ColumnDef<Job>[] = [
     {
         accessorKey: "status",
         header: "채용상태",
-        cell: ({ row }) => (
-            <div className='flex justify-center'>
-                <span
-                    className={`
-                    text-white rounded-sm px-2 py-0.5 font-bold
-                    ${
-                        row.getValue("status") === "최종 합격"
-                            ? "bg-red-500"
-                            : row.getValue("status") === "불합격"
-                              ? "bg-gray-400"
-                              : "bg-blue-500"
-                    }
-                    `}
-                >
-                    {row.getValue("status")}
-                </span>
-            </div>
-        ),
+        cell: ({ row }) => {
+            const status = row.getValue("status") as string | undefined;
+
+            const STATUS_LABEL: Record<string, string> = {
+                APPLIED: "원서접수",
+                INTERVIEW: "면접전형",
+                OFFER: "최종합격",
+                BOOKMARK: "북마크",
+                REJECTED: "불합격",
+            };
+
+            const label = status ? (STATUS_LABEL[status] ?? status) : "-";
+
+            const badgeClass =
+                status === "OFFER"
+                    ? "bg-green-500"
+                    : status === "BOOKMARK"
+                        ? "bg-yellow-400 text-black"
+                        : status === "REJECTED"
+                            ? "bg-gray-400"
+                            : "bg-blue-500";
+            return (
+                <div className='flex justify-center'>
+                    <span
+                        className={[
+                            "text-white rounded-sm px-2 py-0.5 font-bold",
+                            badgeClass,
+                        ].join(" ")}
+                    >
+                        {label}
+                    </span>
+                </div>
+            );
+        },
     },
     {
         id: "actions",

@@ -109,7 +109,7 @@ export default function DetailJobList({
                 <h1 className='text-4xl font-bold pb-4'>{job.companyName}</h1>
 
                 {job.companyIntro ? (
-                    <p className='w-full max-w-5xl'>{job.companyIntro}</p>
+                    <p className='w-full max-w-5x whitespace-pre-wrap break-words'>{job.companyIntro}</p>
                 ) : null}
 
                 {job.jobUrl ? (
@@ -152,7 +152,11 @@ export default function DetailJobList({
                     {companyRows.map(({ label, value }) => (
                         <TableRow key={label}>
                             <TableCell className='font-bold'>{label}</TableCell>
-                            <TableCell>{String(value ?? "-")}</TableCell>
+                            <TableCell>
+                                {label === "업력" && value
+                                    ? `${String(value)}년차`
+                                    : String(value ?? "-")}
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
@@ -192,10 +196,7 @@ export default function DetailJobList({
 
             <div className='my-16'>
                 <span className='font-bold'>채용절차</span>
-                <RecruitmentProcess
-                    steps={["원서접수", "면접전형", "최종합격"]}
-                    status={job.status}
-                />
+                <RecruitmentProcess status={job.status} />
             </div>
 
             <Accordion type='multiple'>
