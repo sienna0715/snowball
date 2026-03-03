@@ -21,6 +21,8 @@ export function parse<T extends z.ZodTypeAny>(
     if (!result.success) {
         const flattened = z.flattenError(result.error);
 
+        console.log("🔥 ZOD ERROR:", flattened);
+
         const details: ValidationDetails = {
             formErrors: flattened.formErrors ?? [],
             fieldErrors: flattened.fieldErrors ?? {},

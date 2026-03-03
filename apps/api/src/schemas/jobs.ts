@@ -2,22 +2,25 @@
 import { z } from "zod";
 import { EmploymentType, JobStatus } from "@prisma/client";
 
+const emptyToUndef = <T extends z.ZodTypeAny>(schema: T) =>
+    z.preprocess((v) => (v === null || v === "" ? undefined : v), schema);
+
 const createBody = z.object({
     companyName: z.string().min(1),
     employmentType: z.enum(EmploymentType),
     status: z.enum(JobStatus),
 
-    position: z.string().optional(),
-    jobUrl: z.url().optional(),
-    companyIntro: z.string().optional(),
-    location: z.string().optional(),
-    industry: z.string().optional(),
-    year: z.number().int().optional(),
-    employees: z.number().int().optional(),
-    ceo: z.string().optional(),
+    position: emptyToUndef(z.string().optional()),
+    jobUrl: emptyToUndef(z.url().optional()),
+    companyIntro: emptyToUndef(z.string().optional()),
+    location: emptyToUndef(z.string().optional()),
+    industry: emptyToUndef(z.string().optional()),
+    year: emptyToUndef(z.number().int().optional()),
+    employees: emptyToUndef(z.number().int().optional()),
+    ceo: emptyToUndef(z.string().optional()),
 
-    workLocation: z.string().optional(),
-    salary: z.string().optional(),
+    workLocation: z.string().min(1),
+    salary: emptyToUndef(z.string().optional()),
     other: z.unknown().nullable().optional(),
 
     responsibilities: z.array(z.string()).default([]),

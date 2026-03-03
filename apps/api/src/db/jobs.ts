@@ -39,6 +39,7 @@ const jobListSelect = {
     position: true,
     jobUrl: true,
     employmentType: true,
+    workLocation: true,
     responsibilities: true,
     requirements: true,
     preferred: true,

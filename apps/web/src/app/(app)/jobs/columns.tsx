@@ -73,6 +73,9 @@ export const columns: ColumnDef<Job>[] = [
     {
         accessorKey: "workLocation",
         header: "근무지",
+        cell: ({ row }) => (
+            <div className='text-center'>{row.getValue("workLocation") || "-"}</div>
+        ),
     },
     {
         accessorKey: "employmentType",
@@ -94,35 +97,35 @@ export const columns: ColumnDef<Job>[] = [
             );
         },
     },
-    {
-        accessorKey: "salary",
-        header: () => <div className='text-center'>급여</div>,
-        cell: ({ row }) => {
-            const raw = row.original.salary;
+    // {
+    //     accessorKey: "salary",
+    //     header: () => <div className='text-center'>급여</div>,
+    //     cell: ({ row }) => {
+    //         const raw = row.original.salary;
 
-            if (raw === null || raw === undefined || raw === "") {
-                return <div className='text-right font-medium'>-</div>;
-            }
+    //         if (raw === null || raw === undefined || raw === "") {
+    //             return <div className='text-right font-medium'>-</div>;
+    //         }
 
-            const value = typeof raw === "number" ? String(raw) : String(raw);
-            const amount = Number(value.replace(/,/g, ""));
+    //         const value = typeof raw === "number" ? String(raw) : String(raw);
+    //         const amount = Number(value.replace(/,/g, ""));
 
-            // 숫자로 변환 가능하면 통화 포맷 적용
-            if (!Number.isNaN(amount)) {
-                const formatted = new Intl.NumberFormat("ko-KR", {
-                    style: "currency",
-                    currency: "KRW",
-                }).format(amount);
+    //         // 숫자로 변환 가능하면 통화 포맷 적용
+    //         if (!Number.isNaN(amount)) {
+    //             const formatted = new Intl.NumberFormat("ko-KR", {
+    //                 style: "currency",
+    //                 currency: "KRW",
+    //             }).format(amount);
 
-                return (
-                    <div className='text-right font-medium'>{formatted}</div>
-                );
-            }
-            const fallback =
-                typeof raw === "object" ? JSON.stringify(raw) : String(raw);
-            return <div className='text-right font-medium'>{fallback}</div>;
-        },
-    },
+    //             return (
+    //                 <div className='text-right font-medium'>{formatted}</div>
+    //             );
+    //         }
+    //         const fallback =
+    //             typeof raw === "object" ? JSON.stringify(raw) : String(raw);
+    //         return <div className='text-right font-medium'>{fallback}</div>;
+    //     },
+    // },
     {
         accessorKey: "deadline",
         header: ({ column }) => {
@@ -157,7 +160,7 @@ export const columns: ColumnDef<Job>[] = [
     },
     {
         accessorKey: "status",
-        header: "Status",
+        header: "채용상태",
         cell: ({ row }) => (
             <div className='flex justify-center'>
                 <span

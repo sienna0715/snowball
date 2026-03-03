@@ -123,7 +123,7 @@ export const authService = {
 
         res.cookie("session", sessionToken, {
             ...cookieOpts,
-            maxAge: 7 * 24 * 60 * 60 * 1000,
+            // maxAge: 24 * 60 * 60 * 1000,
         });
 
         return user;

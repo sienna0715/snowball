@@ -56,6 +56,7 @@ export declare function getAll(userId: number, query: ListJobsQuery): Promise<{
         status: import("@prisma/client").$Enums.JobStatus;
         position: string | null;
         jobUrl: string | null;
+        workLocation: string | null;
         responsibilities: string[];
         requirements: string[];
         preferred: string[];
@@ -113,6 +114,7 @@ export declare function updateJob(jobId: number, userId: number, data: UpdateJob
     status: import("@prisma/client").$Enums.JobStatus;
     position: string | null;
     jobUrl: string | null;
+    workLocation: string | null;
     responsibilities: string[];
     requirements: string[];
     preferred: string[];

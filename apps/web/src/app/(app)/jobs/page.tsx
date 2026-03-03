@@ -8,6 +8,8 @@ export default async function JobPage() {
     const jobsAll = await listJobs(undefined, { cookie: cookieHeader });
     const datas = jobsAll?.items ?? [];
 
+    console.log("jobsResult sample =", datas?.[0]);
+
     return (
         <div className='w-full container mx-auto py-10'>
             <DataTable columns={columns} data={datas} />

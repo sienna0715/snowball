@@ -38,6 +38,8 @@ export async function authMiddleware(
         }
 
         // 그 외(서명 불일치/변조/형식 오류 등)
+        res.clearCookie("session", cookieOpts);
+
         return res.status(401).json({
             code: "INVALID_SESSION",
             message: "Unauthorized👿",

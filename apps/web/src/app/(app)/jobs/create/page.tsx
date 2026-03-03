@@ -13,24 +13,78 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
-
-import type { EmploymentType, JobStatus } from "@/lib/jobsType";
+import {
+    toFieldErrors,
+    type FieldErrors,
+    createJobSchema,
+} from "../../../../lib/validationField";
+import type { EmploymentType, JobStatus } from "../../../../lib/jobsType";
 import { createJobAction } from "../actions";
+import { z } from "zod";
+
+type CreateJobInput = z.infer<typeof createJobSchema>;
 
 export default function CreateJobPage() {
     const [employmentType, setEmploymentType] =
         useState<EmploymentType>("FULL_TIME");
     const [status, setStatus] = useState<JobStatus>("BOOKMARK");
+    const [errors, setErrors] = useState<FieldErrors<CreateJobInput>>({});
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+        const form = e.currentTarget;
+        const fd = new FormData(form);
+
+        const input: z.infer<typeof createJobSchema> = {
+            companyName: String(fd.get("companyName") ?? ""),
+            workLocation: String(fd.get("workLocation") ?? ""),
+            employmentType: fd.get("employmentType") as EmploymentType,
+            status: fd.get("status") as JobStatus,
+        };
+
+        const result = createJobSchema.safeParse(input);
+
+        if (!result.success) {
+            e.preventDefault(); // ✅ 서버액션(createJobAction) 호출 막기
+            setErrors(toFieldErrors(result.error));
+            return;
+        }
+
+        setErrors({}); // ✅ 통과 시 에러 초기화 (그대로 submit 진행)
+    };
 
     return (
         <div className='py-10 mb-25'>
             <form
+                noValidate
                 action={createJobAction}
+                onSubmit={(e) => handleSubmit(e)}
                 className='flex flex-col gap-4 mb-16'
             >
                 <Label htmlFor='companyName' className='flex items-center'>
                     <span className='min-w-25'>회사명</span>
-                    <Input name='companyName' className='max-w-3xl' required />
+                    <div className='flex-1 flex-col'>
+                        <Input
+                            name='companyName'
+                            className='max-w-3xl'
+                            onChange={() =>
+                                setErrors((prev) => ({
+                                    ...prev,
+                                    companyName: undefined,
+                                }))
+                            }
+                        />
+                        {errors.companyName && (
+                            <p
+                                style={{
+                                    marginTop: 8,
+                                    fontSize: 12,
+                                    color: "#ff3838",
+                                }}
+                            >
+                                {errors.companyName}
+                            </p>
+                        )}
+                    </div>
                 </Label>
                 <Label htmlFor='companyIntro' className='flex items-start'>
                     <span className='min-w-25 pt-2'>회사 소개</span>
@@ -72,31 +126,76 @@ export default function CreateJobPage() {
 
                 <Label htmlFor='employmentType' className='flex items-center'>
                     <span className='min-w-25'>근무 형태</span>
-                    <input
-                        type='hidden'
-                        name='employmentType'
-                        value={employmentType}
-                    />
-                    <Select
-                        value={employmentType}
-                        onValueChange={(v) =>
-                            setEmploymentType(v as EmploymentType)
-                        }
-                    >
-                        <SelectTrigger className='w-[180px]'>
-                            <SelectValue placeholder='선택' />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value='FULL_TIME'>정규직</SelectItem>
-                            <SelectItem value='CONTRACT'>계약직</SelectItem>
-                            <SelectItem value='INTERN'>인턴</SelectItem>
-                            <SelectItem value='PART_TIME'>파트타임</SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <div className='flex-1 flex-col'>
+                        <input
+                            type='hidden'
+                            name='employmentType'
+                            value={employmentType}
+                            onChange={() =>
+                                setErrors((prev) => ({
+                                    ...prev,
+                                    employmentType: undefined,
+                                }))
+                            }
+                        />
+                        <Select
+                            value={employmentType}
+                            onValueChange={(v) =>
+                                setEmploymentType(v as EmploymentType)
+                            }
+                        >
+                            <SelectTrigger className='w-[180px]'>
+                                <SelectValue placeholder='선택' />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value='FULL_TIME'>
+                                    정규직
+                                </SelectItem>
+                                <SelectItem value='CONTRACT'>계약직</SelectItem>
+                                <SelectItem value='INTERN'>인턴</SelectItem>
+                                <SelectItem value='PART_TIME'>
+                                    파트타임
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        {errors.employmentType && (
+                            <p
+                                style={{
+                                    marginTop: 8,
+                                    fontSize: 12,
+                                    color: "#ff3838",
+                                }}
+                            >
+                                {errors.employmentType}
+                            </p>
+                        )}
+                    </div>
                 </Label>
                 <Label htmlFor='workLocation' className='flex items-center'>
                     <span className='min-w-25'>근무지</span>
-                    <Input name='workLocation' className='max-w-3xl' />
+                    <div className='flex-1 flex-col'>
+                        <Input
+                            name='workLocation'
+                            className='max-w-3xl'
+                            onChange={() =>
+                                setErrors((prev) => ({
+                                    ...prev,
+                                    workLocation: undefined,
+                                }))
+                            }
+                        />
+                        {errors.workLocation && (
+                            <p
+                                style={{
+                                    marginTop: 8,
+                                    fontSize: 12,
+                                    color: "#ff3838",
+                                }}
+                            >
+                                {errors.workLocation}
+                            </p>
+                        )}
+                    </div>
                 </Label>
                 <Label htmlFor='salary' className='flex items-center'>
                     <span className='min-w-25'>급여</span>
@@ -105,22 +204,46 @@ export default function CreateJobPage() {
 
                 <Label htmlFor='status' className='flex items-center'>
                     <span className='min-w-25'>채용절차</span>
-                    <input type='hidden' name='status' value={status} />
-                    <Select
-                        value={status}
-                        onValueChange={(v) => setStatus(v as JobStatus)}
-                    >
-                        <SelectTrigger className='w-[180px]'>
-                            <SelectValue placeholder='선택' />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value='BOOKMARK'>북마크</SelectItem>
-                            <SelectItem value='APPLIED'>지원</SelectItem>
-                            <SelectItem value='INTERVIEW'>면접</SelectItem>
-                            <SelectItem value='OFFER'>합격</SelectItem>
-                            <SelectItem value='REJECTED'>불합격</SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <div className='flex-1 flex-col'>
+                        <input
+                            type='hidden'
+                            name='status'
+                            value={status}
+                            onChange={() =>
+                                setErrors((prev) => ({
+                                    ...prev,
+                                    status: undefined,
+                                }))
+                            }
+                        />
+
+                        <Select
+                            value={status}
+                            onValueChange={(v) => setStatus(v as JobStatus)}
+                        >
+                            <SelectTrigger className='w-[180px]'>
+                                <SelectValue placeholder='선택' />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value='BOOKMARK'>북마크</SelectItem>
+                                <SelectItem value='APPLIED'>지원</SelectItem>
+                                <SelectItem value='INTERVIEW'>면접</SelectItem>
+                                <SelectItem value='OFFER'>합격</SelectItem>
+                                <SelectItem value='REJECTED'>불합격</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        {errors.status && (
+                            <p
+                                style={{
+                                    marginTop: 8,
+                                    fontSize: 12,
+                                    color: "#ff3838",
+                                }}
+                            >
+                                {errors.status}
+                            </p>
+                        )}
+                    </div>
                 </Label>
                 <Label htmlFor='position' className='flex items-center'>
                     <span className='min-w-25'>직무</span>

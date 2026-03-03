@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { updateJob } from "@/lib/jobs";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
 import type { Job, JobUpdateInput } from "@/lib/jobsType";
+import { z } from "zod";
+import {
+    createJobSchema,
+    toFieldErrors,
+    type FieldErrors,
+} from "../../../../../lib/validationField";
+
+type EditJobInput = z.infer<typeof createJobSchema>;
 
 type Props = {
     job: Job;
@@ -107,31 +115,72 @@ export default function EditJobForm({ job }: Props) {
     );
     const [status, setStatus] = useState<Job["status"]>(job.status);
     const router = useRouter();
-    const [isPending, startTransition] = useTransition();
+    const [errors, setErrors] = useState<FieldErrors<EditJobInput>>({});
 
-    function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
+
         const fd = new FormData(e.currentTarget);
         const payload = buildUpdatePayload(fd, job);
-        startTransition(async () => {
-            await updateJob(job.id, payload);
-            router.push(`/jobs/${job.id}`);
-            router.refresh();
+
+        const input = {
+            companyName: String(fd.get("companyName") ?? ""),
+            workLocation: String(fd.get("workLocation") ?? ""),
+            employmentType: String(fd.get("employmentType") ?? ""),
+            status: String(fd.get("status") ?? ""),
+        };
+
+        const schema = createJobSchema.pick({
+            companyName: true,
+            workLocation: true,
+            employmentType: true,
+            status: true,
         });
+
+        const result = schema.safeParse(input);
+        if (!result.success) {
+            setErrors(toFieldErrors(result.error));
+            return;
+        }
+
+        setErrors({});
+
+        await updateJob(job.id, payload);
+        router.push(`/jobs/${job.id}`);
+        router.refresh();
     }
 
     return (
-        <form onSubmit={handleSubmit} className='flex flex-col gap-4 mb-16'>
+        <form
+            noValidate
+            onSubmit={handleSubmit}
+            className='flex flex-col gap-4 mb-16'
+        >
             <input type='hidden' name='jobId' value={job.id} />
 
             <Label className='flex items-center'>
                 <span className='min-w-25'>회사명</span>
-                <Input
-                    name='companyName'
-                    className='max-w-3xl'
-                    defaultValue={job.companyName}
-                    required
-                />
+                <div className='flex-1 flex-col'>
+                    <Input
+                        name='companyName'
+                        className='max-w-3xl'
+                        defaultValue={job.companyName}
+                        onChange={() =>
+                            setErrors((p) => ({ ...p, companyName: undefined }))
+                        }
+                    />
+                    {errors.companyName && (
+                        <p
+                            style={{
+                                marginTop: 8,
+                                fontSize: 12,
+                                color: "#ff3838",
+                            }}
+                        >
+                            {errors.companyName}
+                        </p>
+                    )}
+                </div>
             </Label>
 
             <Label className='flex items-start'>
@@ -238,11 +287,30 @@ export default function EditJobForm({ job }: Props) {
 
             <Label className='flex items-center'>
                 <span className='min-w-25'>근무지</span>
-                <Input
-                    name='workLocation'
-                    className='max-w-3xl'
-                    defaultValue={job.workLocation ?? ""}
-                />
+                <div className='flex-1 flex-col'>
+                    <Input
+                        name='workLocation'
+                        className='max-w-3xl'
+                        defaultValue={job.workLocation ?? ""}
+                        onChange={() =>
+                            setErrors((p) => ({
+                                ...p,
+                                workLocation: undefined,
+                            }))
+                        }
+                    />
+                    {errors.workLocation && (
+                        <p
+                            style={{
+                                marginTop: 8,
+                                fontSize: 12,
+                                color: "#ff3838",
+                            }}
+                        >
+                            {errors.workLocation}
+                        </p>
+                    )}
+                </div>
             </Label>
 
             <Label className='flex items-center'>
@@ -324,11 +392,7 @@ export default function EditJobForm({ job }: Props) {
                 />
             </Label>
 
-            <Button
-                type='submit'
-                className='mt-4 cursor-pointer'
-                disabled={isPending}
-            >
+            <Button type='submit' className='mt-4 cursor-pointer'>
                 <Save />
                 저장하기
             </Button>

@@ -40,6 +40,7 @@ export declare const jobsService: {
             status: import("@prisma/client").$Enums.JobStatus;
             position: string | null;
             jobUrl: string | null;
+            workLocation: string | null;
             responsibilities: string[];
             requirements: string[];
             preferred: string[];
@@ -89,6 +90,7 @@ export declare const jobsService: {
         status: import("@prisma/client").$Enums.JobStatus;
         position: string | null;
         jobUrl: string | null;
+        workLocation: string | null;
         responsibilities: string[];
         requirements: string[];
         preferred: string[];

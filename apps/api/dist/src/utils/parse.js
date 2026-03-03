@@ -9,6 +9,7 @@ export function parse(schema, input, message = "Validation failed") {
     const result = schema.safeParse(input);
     if (!result.success) {
         const flattened = z.flattenError(result.error);
+        console.log("🔥 ZOD ERROR:", flattened);
         const details = {
             formErrors: flattened.formErrors ?? [],
             fieldErrors: flattened.fieldErrors ?? {},
