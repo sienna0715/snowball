@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Funnel, Trash } from "lucide-react";
+import { Funnel } from "lucide-react";
 
 /** shadcn */
 import {
@@ -179,10 +179,10 @@ export function DataTable<TData, TValue>({
                         {table.getFilteredSelectedRowModel().rows.length} of{" "}
                         {table.getFilteredRowModel().rows.length} row(s) selected.
                     </div>
-                    <Button variant="ghost" className="ml-auto">
+                    {/* <Button variant="ghost" className="ml-auto">
                         <span className="sr-only">Delete</span>
                         <Trash />
-                    </Button>
+                    </Button> */}
                 </div>
                 <div className="flex items-center justify-end space-x-2 py-4">
                     <Button

@@ -1,12 +1,12 @@
-import {
-    Card,
-    CardAction,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
+// import {
+//     Card,
+//     CardAction,
+//     CardContent,
+//     CardDescription,
+//     CardFooter,
+//     CardHeader,
+//     CardTitle,
+// } from "@/components/ui/card";
 import { columns } from "./columns"
 import { DataTable } from "./data-table";
 import { getCoverletters } from "@/service/coverletter";
@@ -15,8 +15,9 @@ export default async function CoverletterPage() {
     const datas = await getCoverletters();
 
     return (
-        <div className="py-10 mb-25">
-            <div className="w-full h-100 flex gap-4">
+        <div>
+            {/* className="py-10 mb-25" */}
+            {/* <div className="w-full h-100 flex gap-4">
                 <Card className="max-w-2xl w-1/2 flex flex-col justify-between">
                     <CardHeader>
                         <CardTitle>지원동기</CardTitle>
@@ -44,7 +45,7 @@ export default async function CoverletterPage() {
                         <p>View</p>
                     </CardFooter>
                 </Card>
-            </div>
+            </div> */}
 
             <div className="w-full container mx-auto py-10">
                 <DataTable columns={columns} data={datas} />
